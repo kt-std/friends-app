@@ -1,5 +1,5 @@
 let FRIENDS_ARRAY = [];
-const USERS_AMOUNT = 100,
+const USERS_AMOUNT = 0,
 	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`;
 
 fetch(API_URL)
@@ -46,6 +46,27 @@ function flattenFriendProperties(friendsArray) {
 	});
 }
 
+function getFriendCardTemplate(friend){
+	return `<div class="card__container">
+				<div class="card__row">
+					<a href='mailto:${friend.email}' class="email__button button"></a>
+					<img src="${friend.image}" class="card__image">
+					<a href='tel:${friend.phone}' class="phone__button button"></a>
+				</div>
+				<div class="card__row column">
+					<h3 class="card__name">${friend.firstName} ${friend.lastName}</h3>
+					<h5 class="card__username">@${friend.username}</h5>
+				</div>
+				<div class="card__row">
+					<h6 class="card__gender">${getGenderIcon(friend.gender)}</h6>
+					<h6 class="card__age">${friend.age}</h6>
+				</div>
+				<div class="card__row">
+					<h6 class="card__country">${friend.country}</h6>
+				</div>
+			</div>`;
+}
+
 function getResponseErrorMessage(status, statusText) {
 	return `<h1 class='error__message'>Sorry, an error occured!</h1>
 			<h2 class='error__code'>${status}: ${statusText}</h2>`;
@@ -60,3 +81,4 @@ function appendErrorMessage(errorText) {
 	div.appendChild(img);
 	document.body.append(div);
 }
+
