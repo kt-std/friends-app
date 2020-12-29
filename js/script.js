@@ -1,5 +1,5 @@
 let FRIENDS_ARRAY = [];
-const USERS_AMOUNT = 0,
+const USERS_AMOUNT = 3,
 	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`;
 
 fetch(API_URL)
@@ -15,7 +15,7 @@ fetch(API_URL)
 	.then((responseBody) => {
 		if (responseBody !== undefined) {
 			FRIENDS_ARRAY = flattenFriendProperties(responseBody.results);
-			console.log(FRIENDS_ARRAY);
+			appendFriendsCards(FRIENDS_ARRAY);
 		}
 	})
 	.catch((error) =>
@@ -46,6 +46,16 @@ function flattenFriendProperties(friendsArray) {
 	});
 }
 
+function appendFriendsCards(friendsArray){
+	const fragment = document.createDocumentFragment();
+	friendsArray.forEach(friend => {
+		const template = document.createElement('template');
+		template.innerHTML = getFriendCardTemplate(friend);
+		fragment.appendChild(template.content);
+	});
+	document.body.appendChild(fragment);
+}
+
 function getFriendCardTemplate(friend){
 	return `<div class="card__container">
 				<div class="card__row">
@@ -65,6 +75,10 @@ function getFriendCardTemplate(friend){
 					<h6 class="card__country">${friend.country}</h6>
 				</div>
 			</div>`;
+}
+
+function getGenderIcon(gender){
+	return gender === 'female' ?  '♀' : '♂';
 }
 
 function getResponseErrorMessage(status, statusText) {
