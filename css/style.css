@@ -390,14 +390,13 @@ body {
 
 .filters__container {
     background-color: white;
-    height: 0;
+    height: 120px;
     width: 100%;
-    display: flex;
+    display: none;
     align-items: center;
-    visibility: hidden;
     justify-content: space-between;
     margin-bottom: var(--margin);
-    transition: .4s;
+    transition: .2s;
     box-sizing: border-box;
     padding: 0 var(--padding);
 }
@@ -468,8 +467,7 @@ body {
 }
 
 .height {
-    height: 100px;
-    visibility: visible;
+    display: flex;
 }
 
 .list__item:hover {

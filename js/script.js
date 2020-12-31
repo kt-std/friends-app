@@ -1,6 +1,7 @@
 let FRIENDS_ARRAY = [];
 const USERS_AMOUNT = 20,
-	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`;
+	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`,
+	TOTAL_COUNTER = document.querySelector(".amount");
 
 fetch(API_URL)
 	.then((response) => {
@@ -16,9 +17,7 @@ fetch(API_URL)
 		if (responseBody !== undefined) {
 			FRIENDS_ARRAY = flattenFriendProperties(responseBody.results);
 			appendFriendsCards(FRIENDS_ARRAY);
-			document.querySelector(
-				".amount"
-			).innerHTML = `${FRIENDS_ARRAY.length} Totals`;
+			setTotalCounter(FRIENDS_ARRAY);
 		}
 	})
 	.catch((error) =>
@@ -31,6 +30,10 @@ function checkResponseStatus(status) {
 	} else {
 		return false;
 	}
+}
+
+function setTotalCounter(friendsArray){
+	TOTAL_COUNTER.innerText = `${friendsArray.length} Totals`;
 }
 
 function flattenFriendProperties(friendsArray) {
@@ -123,8 +126,7 @@ document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
 document.querySelector("#sort").addEventListener("click", (e) => {
 	document.querySelector(".select__list").classList.toggle("visible");
 	if (e.target.attributes.class.nodeValue === "list__item") {
-		document.querySelector(".select__face-item").innerText =
-			e.target.textContent;
+		document.querySelector(".select__face-item").innerText = e.target.textContent;
 		cleanCardsContainer();
 		appendFriendsCards(sortCardsArray(e.target.attributes.value.nodeValue));
 	}
@@ -148,15 +150,16 @@ function cleanCardsContainer() {
 }
 
 document.querySelector("#search").addEventListener("input", (e) => {
-	const inputString = e.target.value;
-	cleanCardsContainer();
-	appendFriendsCards(
-		findMatchesWithPropertiesValues(
+	const inputString = e.target.value,
+		filteredArray = findMatchesWithPropertiesValues(
 			["firstName", "lastName", "email", "username"],
 			FRIENDS_ARRAY,
 			inputString
-		)
-	);
+		);
+	
+	cleanCardsContainer();	
+	appendFriendsCards(filteredArray);
+	setTotalCounter(filteredArray);
 });
 
 function findSubstring(string, substring) {
