@@ -17,15 +17,8 @@
 	</header>
 	<main class="main__container flex">
 		<div class="main__row">
-			<h2 class="heading">Your friends <span class="amount"></span></h2>
-			
-
-		
-			<!--filtering friends by age, by name, country--->
-			<!--sort options ascending/descending name/age>
-			
-			<!-----insert pagination---->
-			<button class="filters__button" id="filtersButton">Show filters</button>
+			<h2 class="heading">Your friends <span class="amount"></span></h2>			
+			<button class="filters__button" id="showFiltersButton">Show filters</button>
 		</div>
 		<div class="filters__container">
 			<div class="select__item">
@@ -34,16 +27,17 @@
 					<li>
 						<span class="select__face-item">Sorting type</span>
 						<ul name="sort" id="sort" class="select__list"> 
-							<li value="NA" class="list__item">Names ascending</li>
-							<li value="ND" class="list__item">Names descending</li>
-							<li value="AA" class="list__item">Age ascending</li>
-							<li  value="AD" class="list__item">Age descending</li>
+							<li value="NA" class="list__item">Names: A first</li>
+							<li value="ND" class="list__item">Names: Z first</li>
+							<li value="AA" class="list__item">Age: ascending</li>
+							<li  value="AD" class="list__item">Age: descending</li>
 						</ul>	
 					</li>
 				</ul>
 			</div>
 		</div>
 		<div class="cards__container"></div>
+		<!-----insert pagination---->
 	</main>
 	<script src="js/script.js"></script>
 </body>

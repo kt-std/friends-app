@@ -1,5 +1,5 @@
 let FRIENDS_ARRAY = [];
-const USERS_AMOUNT = 16,
+const USERS_AMOUNT = 20,
 	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`;
 
 fetch(API_URL)
@@ -14,10 +14,11 @@ fetch(API_URL)
 	})
 	.then((responseBody) => {
 		if (responseBody !== undefined) {
-			console.log(responseBody);
 			FRIENDS_ARRAY = flattenFriendProperties(responseBody.results);
 			appendFriendsCards(FRIENDS_ARRAY);
-			document.querySelector('.amount').innerHTML = `${FRIENDS_ARRAY.length} Totals`;
+			document.querySelector(
+				".amount"
+			).innerHTML = `${FRIENDS_ARRAY.length} Totals`;
 		}
 	})
 	.catch((error) =>
@@ -45,22 +46,22 @@ function flattenFriendProperties(friendsArray) {
 			age: friend.dob.age,
 			image: friend.picture.large,
 			registeredAge: friend.registered.age,
-			registeredDate: friend.registered.date
+			registeredDate: friend.registered.date,
 		};
 	});
 }
 
-function appendFriendsCards(friendsArray){
+function appendFriendsCards(friendsArray) {
 	const fragment = document.createDocumentFragment();
-	friendsArray.forEach(friend => {
-		const template = document.createElement('template');
+	friendsArray.forEach((friend) => {
+		const template = document.createElement("template");
 		template.innerHTML = getFriendCardTemplate(friend);
 		fragment.appendChild(template.content);
 	});
-	document.querySelector('.cards__container').appendChild(fragment);
+	document.querySelector(".cards__container").appendChild(fragment);
 }
 
-function getFriendCardTemplate(friend){
+function getFriendCardTemplate(friend) {
 	return `<div class="card__container shadow">
 				<div class="card__row around">
 					<a href='mailto:${friend.email}' class="email__button button"></a>
@@ -75,9 +76,9 @@ function getFriendCardTemplate(friend){
 					<h6 class="card__gender">${getGenderIcon(friend.gender)}</h6>
 					<h6 class="card__age">${friend.age}</h6>
 				</div>
-
 				<div class="card__row registered__container">
-					<p class="registered__message">Friends since <br> ${getDate(friend.registeredDate)}</p>
+					<p class="registered__message">Friends since <br> 
+					${getDate(friend.registeredDate)}</p>
 					<div style="width:${friend.registredAge}%"></div>
 				</div>
 				<div class="card__row country__row">
@@ -86,13 +87,18 @@ function getFriendCardTemplate(friend){
 			</div>`;
 }
 
-function getDate(date){
-	return (new Date(date)).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'} );
-	
+function getDate(date) {
+	return new Date(date).toLocaleString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
 }
 
-function getGenderIcon(gender){
-	return gender === 'female' ?  '<span class="female">♀</span>' : '<span class="male">♂</span>';
+function getGenderIcon(gender) {
+	return gender === "female"
+		? '<span class="female">♀</span>'
+		: '<span class="male">♂</span>';
 }
 
 function getResponseErrorMessage(status, statusText) {
@@ -110,31 +116,63 @@ function appendErrorMessage(errorText) {
 	document.body.append(div);
 }
 
-
-document.querySelector('#filtersButton').addEventListener('click', (e)=>{
-	document.querySelector('.filters__container').classList.toggle('height');
+document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
+	document.querySelector(".filters__container").classList.toggle("height");
 });
 
-
-document.querySelector("#sort").addEventListener('click', e => {
-	console.log(e);
-	document.querySelector('.select__list').classList.toggle('visible');
-	if(e.target.attributes.class.nodeValue === "list__item"){
-		document.querySelector('.select__face-item').innerText = e.target.textContent;
-		console.log(sortCards(e.target.attributes.value.nodeValue));
-		
+document.querySelector("#sort").addEventListener("click", (e) => {
+	document.querySelector(".select__list").classList.toggle("visible");
+	if (e.target.attributes.class.nodeValue === "list__item") {
+		document.querySelector(".select__face-item").innerText =
+			e.target.textContent;
+		cleanCardsContainer();
+		appendFriendsCards(sortCardsArray(e.target.attributes.value.nodeValue));
 	}
 });
 
-function sortCards(condition){
-	switch(condition){
-		case 'ND':
-			return FRIENDS_ARRAY.sort((a,b)=> b.firstName.localeCompare(a.firstName));
-		case 'NA':
-			return FRIENDS_ARRAY.sort((a,b)=> a.firstName.localeCompare(b.firstName));
-		case 'AD':
-			return FRIENDS_ARRAY.sort((a,b)=> b.age - a.age);
-		case 'AA':
-			return FRIENDS_ARRAY.sort((a,b)=> a.age - b.age);
+function sortCardsArray(condition) {
+	switch (condition) {
+		case "ND":
+			return FRIENDS_ARRAY.sort((a, b) => b.firstName.localeCompare(a.firstName));
+		case "NA":
+			return FRIENDS_ARRAY.sort((a, b) => a.firstName.localeCompare(b.firstName));
+		case "AD":
+			return FRIENDS_ARRAY.sort((a, b) => b.age - a.age);
+		case "AA":
+			return FRIENDS_ARRAY.sort((a, b) => a.age - b.age);
 	}
+}
+
+function cleanCardsContainer() {
+	document.querySelector(".cards__container").innerHTML = "";
+}
+
+document.querySelector("#search").addEventListener("input", (e) => {
+	const inputString = e.target.value;
+	cleanCardsContainer();
+	appendFriendsCards(
+		findMatchesWithPropertiesValues(
+			["firstName", "lastName", "email", "username"],
+			FRIENDS_ARRAY,
+			inputString
+		)
+	);
+});
+
+function findSubstring(string, substring) {
+	return string.toLowerCase().indexOf(substring.toLowerCase()) >= 0
+		? true
+		: false;
+}
+
+function findMatchesWithPropertiesValues(
+	propertiesList,
+	friendsArray,
+	substring
+) {
+	return friendsArray.filter((friend) => {
+		return propertiesList
+			.map((property) => findSubstring(friend[property], substring))
+			.some((el) => el);
+	});
 }

@@ -387,133 +387,96 @@ body {
 .filters__button::-moz-focus-inner {
     border: 0;
 }
-/*
+
 .filters__container {
+    background-color: white;
+    height: 0;
+    width: 100%;
     display: flex;
     align-items: center;
-    background-color: white;
-    width: 100%;
+    visibility: hidden;
+    justify-content: space-between;
     margin-bottom: var(--margin);
+    transition: .4s;
     box-sizing: border-box;
-    overflow: hidden;
     padding: 0 var(--padding);
-    transition: height 1s;
-    height: 0;
-    border: 10px solid red;
-}
-
-.select__container{
-	max-width: 250px;
 }
 
 .label {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    font-weight: var(--bold);
-    font-size: var(--font-small);
-    color: var(--username-color);
+    display: inline-block;
+    margin-bottom: 5px;
 }
 
-.height {
-	height: auto;
-	min-height: 120px;
-	max-height: 500px;
+.select__item {
+    max-width: 250px;
 }
-.sort__select{
-	border: 1px solid var(--border-color);
-    box-sizing: border-box;
-    outline: none;
-    transition: .5s;
-    padding: 10px var(--padding);
-    border-radius: var(--border-radius);
-}*/
 
-.filters__container {
-	background-color: white;
-	height: 0;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	visibility: hidden;
-	justify-content: space-between;
-	margin-bottom: var(--margin); 
-	transition: .4s;
-	box-sizing: border-box;
-	padding: 0 var(--padding);
-}
-.label {
-	display: inline-block;
-	margin-bottom: 5px;
-}
-.select__item{
-	max-width: 250px;
-}
 .select__container {
-	width: 200px;
+    width: 200px;
 }
+
 .select__face-item {
-	width: 100%;
-	display: inline-block;
-	box-sizing: border-box;
-	border-radius: var(--border-radius) ;
-	border: 1px solid var(--border-color);
-	position: relative;
-	padding: 10px var(--padding);
-	color: var(--username-color);
-	background-color: var(--background-color);
+    width: 100%;
+    display: inline-block;
+    box-sizing: border-box;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    position: relative;
+    padding: 10px var(--padding);
+    color: var(--username-color);
+    background-color: var(--background-color);
 
- 	font-size: var(--font-small);
+    font-size: var(--font-small);
 }
 
-.select__face-item:hover:after{
-	cursor: pointer;
+.select__face-item:hover:after {
+    cursor: pointer;
 }
 
-.select__face-item:after{
- 	content: 'v';
- 	position: absolute;
- 	background-color: #e0e0e0;
- 	box-sizing: border-box;
- 	right: 0;
- 	top: 0;
- 	display: flex;
- 	align-items: center;
- 	justify-content: center;
- 	height: 100%;
- 	width: 40px;
- 	border-radius: 0 var(--border-radius) var(--border-radius) 0;
- 	border: 1px solid var(--border-color);
+.select__face-item:after {
+    content: 'v';
+    position: absolute;
+    background-color: #e0e0e0;
+    box-sizing: border-box;
+    right: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 40px;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    border: 1px solid var(--border-color);
 }
 
 .select__list {
-	border-left: 1px solid var(--border-color);
-	border-right: 1px solid var(--border-color);
-	position: absolute;
-	z-index: 1;
-	background-color: white;
-	width: 200px;
-	box-sizing: border-box;
-	box-shadow: 0 0 8px rgba(0,0,0,.2);
-	visibility: hidden;
-}
-.list__item{
-	padding: 10px var(--padding);
-	font-size: var(--font-small);
-	border-bottom: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    width: 200px;
+    box-sizing: border-box;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .2);
+    visibility: hidden;
 }
 
-.height{
-	height: 100px;
-	visibility: visible;
+.list__item {
+    padding: 10px var(--padding);
+    font-size: var(--font-small);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.list__item:hover{
-	cursor:pointer;
-	background-color: var(--background-color);
+.height {
+    height: 100px;
+    visibility: visible;
 }
 
-.visible{
-	visibility: visible;
+.list__item:hover {
+    cursor: pointer;
+    background-color: var(--background-color);
+}
+
+.visible {
+    visibility: visible;
 }
