@@ -1,5 +1,5 @@
 let FRIENDS_ARRAY = [];
-const USERS_AMOUNT = 3,
+const USERS_AMOUNT = 50,
 	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`;
 
 fetch(API_URL)
@@ -14,8 +14,10 @@ fetch(API_URL)
 	})
 	.then((responseBody) => {
 		if (responseBody !== undefined) {
+			console.log(responseBody);
 			FRIENDS_ARRAY = flattenFriendProperties(responseBody.results);
 			appendFriendsCards(FRIENDS_ARRAY);
+			document.querySelector('.amount').innerHTML = `${FRIENDS_ARRAY.length} Totals`;
 		}
 	})
 	.catch((error) =>
@@ -41,7 +43,9 @@ function flattenFriendProperties(friendsArray) {
 			username: friend.login.username,
 			phone: friend.phone,
 			age: friend.dob.age,
-			image: friend.picture.thumbnail,
+			image: friend.picture.large,
+			registeredAge: friend.registered.age,
+			registeredDate: friend.registered.date
 		};
 	});
 }
@@ -53,12 +57,12 @@ function appendFriendsCards(friendsArray){
 		template.innerHTML = getFriendCardTemplate(friend);
 		fragment.appendChild(template.content);
 	});
-	document.body.appendChild(fragment);
+	document.querySelector('.cards__container').appendChild(fragment);
 }
 
 function getFriendCardTemplate(friend){
-	return `<div class="card__container">
-				<div class="card__row">
+	return `<div class="card__container shadow">
+				<div class="card__row around">
 					<a href='mailto:${friend.email}' class="email__button button"></a>
 					<img src="${friend.image}" class="card__image">
 					<a href='tel:${friend.phone}' class="phone__button button"></a>
@@ -67,18 +71,28 @@ function getFriendCardTemplate(friend){
 					<h3 class="card__name">${friend.firstName} ${friend.lastName}</h3>
 					<h5 class="card__username">@${friend.username}</h5>
 				</div>
-				<div class="card__row">
+				<div class="card__row gender__container">
 					<h6 class="card__gender">${getGenderIcon(friend.gender)}</h6>
 					<h6 class="card__age">${friend.age}</h6>
 				</div>
-				<div class="card__row">
+
+				<div class="card__row registered__container">
+					<p class="registered__message">Friends since <br> ${getDate(friend.registeredDate)}</p>
+					<div style="width:${friend.registredAge}%"></div>
+				</div>
+				<div class="card__row country__row">
 					<h6 class="card__country">${friend.country}</h6>
 				</div>
 			</div>`;
 }
 
+function getDate(date){
+	return (new Date(date)).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'} );
+	
+}
+
 function getGenderIcon(gender){
-	return gender === 'female' ?  '♀' : '♂';
+	return gender === 'female' ?  '<span class="female">♀</span>' : '<span class="male">♂</span>';
 }
 
 function getResponseErrorMessage(status, statusText) {
@@ -96,3 +110,6 @@ function appendErrorMessage(errorText) {
 	document.body.append(div);
 }
 
+document.querySelector('#filtersButton').addEventListener('click', (e)=>{
+	document.querySelector('.filters__container').classList.toggle('height');
+});

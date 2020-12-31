@@ -2,9 +2,49 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;1,700&display=swap" rel="stylesheet"> 
 	<title>Friends App</title>
 </head>
 <body>
+	<header class="header__container">
+		<h3 class="logo__text">Fri<span class="colored">end</span>s App</h3>
+		<div class="search__container">
+			<input type="text" class="search__field" id="search" placeholder="Search...">
+			<label class="before"></label>
+		</div>
+	</header>
+	<main class="main__container flex">
+		<div class="main__row">
+			<h2 class="heading">Your friends <span class="amount"></span></h2>
+			
+
+		
+			<!--filtering friends by age, by name, country--->
+			<!--sort options ascending/descending name/age>
+			
+			<!-----insert pagination---->
+			<button class="filters__button" id="filtersButton">Show filters</button>
+		</div>
+		<div class="filters__container">
+			<div class="select__item">
+				<label class="label" for="sort">Sort:</label>
+				<ul class="select__container" id="sort">
+					<li>
+						<span class="select__face-item">Sorting type</span>
+						<ul name="sort" id="sort" class="select__list"> 
+							<li value="name ascending" class="list__item">Names ascending</li>
+							<li value="name descending" class="list__item">Names descending</li>
+							<li value="age ascending" class="list__item">Age ascending</li>
+							<li value="age descending" class="list__item">Age descending</li>
+						</ul>	
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="cards__container"></div>
+	</main>
 	<script src="js/script.js"></script>
 </body>
 </html>
