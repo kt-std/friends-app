@@ -1,6 +1,8 @@
-let FRIENDS_ARRAY = [];
+let FRIENDS_ARRAY = [],
+	INITIAL_FRIENDS_ARRAY = [];
 const USERS_AMOUNT = 20,
 	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`,
+	CARDS_CONTAINER = document.querySelector(".cards__container"),
 	TOTAL_COUNTER = document.querySelector(".amount");
 
 fetch(API_URL)
@@ -15,14 +17,26 @@ fetch(API_URL)
 	})
 	.then((responseBody) => {
 		if (responseBody !== undefined) {
-			FRIENDS_ARRAY = flattenFriendProperties(responseBody.results);
+			INITIAL_FRIENDS_ARRAY = flattenFriendProperties(
+				responseBody.results
+			);
+			FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY;
 			appendFriendsCards(FRIENDS_ARRAY);
 			setTotalCounter(FRIENDS_ARRAY);
+			initializeAgeEdges(FRIENDS_ARRAY);
 		}
 	})
 	.catch((error) =>
 		appendErrorMessage(`Please, check your network connection! ${error}`)
 	);
+
+function initializeAgeEdges(friendsArray) {
+	["minAge", "maxAge"].forEach((edgeName) =>
+		["min", "max"].forEach((edgeValue) =>
+			setAgeEdge(findAge(friendsArray, edgeValue), edgeName, edgeValue)
+		)
+	);
+}
 
 function checkResponseStatus(status) {
 	if (status >= 200 && status < 300) {
@@ -32,8 +46,18 @@ function checkResponseStatus(status) {
 	}
 }
 
-function setTotalCounter(friendsArray){
+function setTotalCounter(friendsArray) {
 	TOTAL_COUNTER.innerText = `${friendsArray.length} Totals`;
+	if (!friendsArray.length) {
+		appendNoResultsMessage();
+	}
+}
+
+function appendNoResultsMessage() {
+	const noResultMessage = document.createElement("h3");
+	noResultMessage.innerText = "Sorry! No results found :(";
+	noResultMessage.classList.add("no-results");
+	CARDS_CONTAINER.appendChild(noResultMessage);
 }
 
 function flattenFriendProperties(friendsArray) {
@@ -54,14 +78,27 @@ function flattenFriendProperties(friendsArray) {
 	});
 }
 
+function setAgeEdge(ageEdge, edgeName, edgeValue) {
+	document.getElementById(edgeName)[edgeValue] = ageEdge;
+}
+
+function findAge(friendsArray, value) {
+	const sortedArray = friendsArray.sort((a, b) => a.age - b.age);
+	return value === "min"
+		? sortedArray[0].age
+		: sortedArray[sortedArray.length - 1].age;
+}
+
 function appendFriendsCards(friendsArray) {
+	cleanCardsContainer();
+	setTotalCounter(friendsArray);
 	const fragment = document.createDocumentFragment();
 	friendsArray.forEach((friend) => {
 		const template = document.createElement("template");
 		template.innerHTML = getFriendCardTemplate(friend);
 		fragment.appendChild(template.content);
 	});
-	document.querySelector(".cards__container").appendChild(fragment);
+	CARDS_CONTAINER.appendChild(fragment);
 }
 
 function getFriendCardTemplate(friend) {
@@ -119,48 +156,26 @@ function appendErrorMessage(errorText) {
 	document.body.append(div);
 }
 
-document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
-	document.querySelector(".filters__container").classList.toggle("height");
-});
+function cleanCardsContainer() {
+	CARDS_CONTAINER.innerHTML = "";
+}
 
-document.querySelector("#sort").addEventListener("click", (e) => {
-	document.querySelector(".select__list").classList.toggle("visible");
-	if (e.target.attributes.class.nodeValue === "list__item") {
-		document.querySelector(".select__face-item").innerText = e.target.textContent;
-		cleanCardsContainer();
-		appendFriendsCards(sortCardsArray(e.target.attributes.value.nodeValue));
-	}
-});
-
-function sortCardsArray(condition) {
+function sortCardsArray(condition, friendsArray) {
 	switch (condition) {
 		case "ND":
-			return FRIENDS_ARRAY.sort((a, b) => b.firstName.localeCompare(a.firstName));
+			return FRIENDS_ARRAY.sort((a, b) =>
+				b.firstName.localeCompare(a.firstName)
+			);
 		case "NA":
-			return FRIENDS_ARRAY.sort((a, b) => a.firstName.localeCompare(b.firstName));
+			return FRIENDS_ARRAY.sort((a, b) =>
+				a.firstName.localeCompare(b.firstName)
+			);
 		case "AD":
 			return FRIENDS_ARRAY.sort((a, b) => b.age - a.age);
 		case "AA":
 			return FRIENDS_ARRAY.sort((a, b) => a.age - b.age);
 	}
 }
-
-function cleanCardsContainer() {
-	document.querySelector(".cards__container").innerHTML = "";
-}
-
-document.querySelector("#search").addEventListener("input", (e) => {
-	const inputString = e.target.value,
-		filteredArray = findMatchesWithPropertiesValues(
-			["firstName", "lastName", "email", "username"],
-			FRIENDS_ARRAY,
-			inputString
-		);
-	
-	cleanCardsContainer();	
-	appendFriendsCards(filteredArray);
-	setTotalCounter(filteredArray);
-});
 
 function findSubstring(string, substring) {
 	return string.toLowerCase().indexOf(substring.toLowerCase()) >= 0
@@ -179,3 +194,71 @@ function findMatchesWithPropertiesValues(
 			.some((el) => el);
 	});
 }
+
+document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
+	document.querySelector(".filters__container").classList.toggle("height");
+});
+
+document.querySelector("#sort").addEventListener("click", (e) => {
+	document.querySelector(".select__list").classList.toggle("visible");
+	if (e.target.attributes.class.nodeValue === "list__item") {
+		document.querySelector(".select__face-item").innerText =
+			e.target.textContent;
+		appendFriendsCards(sortCardsArray(e.target.attributes.value.nodeValue));
+	}
+});
+
+document.querySelector("#search").addEventListener("input", (e) => {
+	const inputString = e.target.value,
+		filteredArray = findMatchesWithPropertiesValues(
+			["firstName", "lastName", "email", "username"],
+			FRIENDS_ARRAY,
+			inputString
+		);
+	appendFriendsCards(filteredArray);
+});
+
+document.querySelector("#genderFilter").addEventListener("click", (e) => {
+	if (e.target.type === "checkbox") {
+		if (e.target.checked) {
+			FRIENDS_ARRAY = FRIENDS_ARRAY.concat(
+				filterByGender(e.target.value, INITIAL_FRIENDS_ARRAY)
+			);
+		} else {
+			FRIENDS_ARRAY = removeByGender(e.target.value, FRIENDS_ARRAY);
+		}
+		appendFriendsCards(FRIENDS_ARRAY);
+	}
+});
+
+function removeByGender(gender, friendsArray) {
+	return friendsArray.filter((friend) => friend.gender !== gender);
+}
+
+function filterByGender(gender, friendsArray) {
+	return friendsArray.filter((friend) => friend.gender === gender);
+}
+
+function filterByAge(minAge, maxAge, friendsArray) {
+	console.log(`minAge, ${minAge} maxAge, ${maxAge}`);
+	return friendsArray.filter((friend) => friend.age >= minAge && friend.age < maxAge);
+}
+
+
+
+document.querySelector("#ageFilter").addEventListener("change", (e) => {
+	if (e.target.type === "number") {
+		const min = document.getElementById('minAge'),
+			max = document.getElementById('maxAge');
+		if(min.value && max.value){
+			FRIENDS_ARRAY = filterByAge(min.value, max.value, INITIAL_FRIENDS_ARRAY);
+		}
+		appendFriendsCards(FRIENDS_ARRAY);
+	}
+});
+
+window.addEventListener("beforeunload", () => {
+	["#search", "#minAge", "#maxAge"].forEach(
+		(element) => (document.querySelector(element).value = "")
+	);
+});

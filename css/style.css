@@ -414,7 +414,8 @@ body {
     width: 200px;
 }
 
-.select__face-item {
+.select__face-item,
+.number {
     width: 100%;
     display: inline-block;
     box-sizing: border-box;
@@ -433,7 +434,7 @@ body {
 }
 
 .select__face-item:after {
-    content: 'v';
+    content: '⌄';
     position: absolute;
     background-color: #e0e0e0;
     box-sizing: border-box;
@@ -477,4 +478,26 @@ body {
 
 .visible {
     visibility: visible;
+}
+
+.filter__item{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-content: center;
+	flex-direction: column;
+	margin-right: var(--margin);
+}
+.gender__filter{
+	display:  flex;
+}
+.number{
+	width: 80px;
+	padding-right: 10px;
+}
+.checkbox:checked{
+	color:var(--color-accent);
+}
+.no-results{
+
 }
