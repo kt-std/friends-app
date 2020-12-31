@@ -496,6 +496,7 @@ body {
 	width: 200px;
 	box-sizing: border-box;
 	box-shadow: 0 0 8px rgba(0,0,0,.2);
+	visibility: hidden;
 }
 .list__item{
 	padding: 10px var(--padding);
@@ -505,5 +506,14 @@ body {
 
 .height{
 	height: 100px;
+	visibility: visible;
+}
+
+.list__item:hover{
+	cursor:pointer;
+	background-color: var(--background-color);
+}
+
+.visible{
 	visibility: visible;
 }

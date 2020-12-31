@@ -1,5 +1,5 @@
 let FRIENDS_ARRAY = [];
-const USERS_AMOUNT = 50,
+const USERS_AMOUNT = 16,
 	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`;
 
 fetch(API_URL)
@@ -110,6 +110,31 @@ function appendErrorMessage(errorText) {
 	document.body.append(div);
 }
 
+
 document.querySelector('#filtersButton').addEventListener('click', (e)=>{
 	document.querySelector('.filters__container').classList.toggle('height');
 });
+
+
+document.querySelector("#sort").addEventListener('click', e => {
+	console.log(e);
+	document.querySelector('.select__list').classList.toggle('visible');
+	if(e.target.attributes.class.nodeValue === "list__item"){
+		document.querySelector('.select__face-item').innerText = e.target.textContent;
+		console.log(sortCards(e.target.attributes.value.nodeValue));
+		
+	}
+});
+
+function sortCards(condition){
+	switch(condition){
+		case 'ND':
+			return FRIENDS_ARRAY.sort((a,b)=> b.firstName.localeCompare(a.firstName));
+		case 'NA':
+			return FRIENDS_ARRAY.sort((a,b)=> a.firstName.localeCompare(b.firstName));
+		case 'AD':
+			return FRIENDS_ARRAY.sort((a,b)=> b.age - a.age);
+		case 'AA':
+			return FRIENDS_ARRAY.sort((a,b)=> a.age - b.age);
+	}
+}
