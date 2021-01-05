@@ -118,7 +118,7 @@ function getFriendCardTemplate(friend) {
 				<div class="card__row around">
 					<a href='mailto:${friend.email}' class="email__button button" data-title='${friend.email}'></a>
 					<img src="${friend.image}" class="card__image">
-					<a href='tel:${friend.phone}' class="phone__button button" data-title='${friend.phone}'></a>
+					<a href='tel:${friend.phone}' class="phone__button button" data-title='${reformatPhoneNumber(friend.phone)}'></a>
 				</div>
 				<div class="card__row column">
 					<h3 class="card__name">${friend.firstName} ${friend.lastName}</h3>
@@ -137,6 +137,10 @@ function getFriendCardTemplate(friend) {
 					<h6 class="card__country">${friend.country}</h6>
 				</div>
 			</div>`;
+}
+
+function reformatPhoneNumber(number){
+	return number.replace(/[^0-9]+/g, '').replace(/.(\d{3})/g, '$1-').replace(/(^\d{3,3})-(.\d+)/,  '+($1)-$2').replace(/[-]+$/g, '');
 }
 
 function getDate(date) {
