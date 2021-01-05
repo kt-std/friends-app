@@ -345,6 +345,7 @@ body {
     filter: saturate(1);
 }
 
+.more__button,
 .filters__button {
     border: 1px solid var(--border-color);
     box-sizing: border-box;
@@ -353,6 +354,8 @@ body {
     padding: 10px var(--padding);
     border-radius: var(--border-radius);
 }
+
+
 
 .heading {
     font-size: var(--font-large);
@@ -367,13 +370,21 @@ body {
     margin-left: 5px;
 }
 
+.more__button,
 .filters__button:hover {
     cursor: pointer;
     background-color: var(--color-accent);
     color: white;
 }
+.more__button:hover{
+    box-shadow: var(--shadow);
+}
+.more__button{
+    margin-top: var(--margin);
+}
 
-.filters__button::-moz-focus-inner {
+.filters__button::-moz-focus-inner,
+.more__button::-moz-focus-inner {
     border: 0;
 }
 
