@@ -260,7 +260,12 @@ function updateCards(event){
 }
 
 document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
-	document.querySelector(".filters__container").classList.toggle("display");
+	const filtersContainer = document.querySelector(".filters__container");
+	filtersContainer.classList.toggle("display");
+	Array.from(filtersContainer.children).forEach(node=>{
+		node.classList.toggle('visible');
+	});
+	console.log(filtersContainer);
 });
 
 document.querySelector("#sort").addEventListener("click", (e) => {
@@ -270,7 +275,7 @@ document.querySelector("#sort").addEventListener("click", (e) => {
 document.querySelector("#search").addEventListener("input", (e) => {
 	const inputString = e.target.value,
 		filteredArray = findMatchesWithPropertiesValues(
-			["firstName", "lastName", "email", "username"],
+			["firstName", "lastName", "email", "username","country"],
 			FRIENDS_ARRAY,
 			inputString
 		);
