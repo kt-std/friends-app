@@ -5,22 +5,25 @@ const USERS_AMOUNT = 24,
 	CARDS_CONTAINER = document.querySelector(".cards__container"),
 	TOTAL_COUNTER = document.querySelector(".amount");
 
-function getFriends(){
+function getFriends() {
 	fetch(API_URL)
 		.then((response) => {
 			if (checkResponseStatus(response.status)) {
 				return response.json();
 			} else {
 				appendErrorMessage(
-					getResponseErrorMessage(response.status, response.statusText)
+					getResponseErrorMessage(
+						response.status,
+						response.statusText
+					)
 				);
 			}
 		})
 		.then((responseBody) => {
 			if (responseBody !== undefined) {
-				INITIAL_FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY.concat(flattenFriendProperties(
-					responseBody.results
-				));
+				INITIAL_FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY.concat(
+					flattenFriendProperties(responseBody.results)
+				);
 				FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY;
 				appendFriendsCards(FRIENDS_ARRAY);
 				setTotalCounter(FRIENDS_ARRAY);
@@ -28,9 +31,7 @@ function getFriends(){
 			}
 		})
 		.catch((error) =>
-			appendErrorMessage(
-				`${error} <br> Try to reload the page!`
-			)
+			appendErrorMessage(`${error} <br> Try to reload the page!`)
 		);
 }
 
@@ -54,7 +55,11 @@ function setTotalCounter(friendsArray) {
 function initializeAgeLimits(friendsArray) {
 	["minAge", "maxAge"].forEach((limitInputId) =>
 		["min", "max"].forEach((limitType) =>
-			setAgeLimit(getCertainAgeLimit(friendsArray, limitType), limitInputId, limitType)
+			setAgeLimit(
+				getCertainAgeLimit(friendsArray, limitType),
+				limitInputId,
+				limitType
+			)
 		)
 	);
 }
@@ -116,9 +121,11 @@ function flattenFriendProperties(friendsArray) {
 function getFriendCardTemplate(friend) {
 	return `<div class="card__container shadow">
 				<div class="card__row around">
-					<a href='mailto:${friend.email}' class="email__button button" data-title='${friend.email}'></a>
+					<a href='mailto:${friend.email}' class="email__button button" 
+					   data-title='${friend.email}'></a>
 					<img src="${friend.image}" class="card__image">
-					<a href='tel:${friend.phone}' class="phone__button button" data-title='${reformatPhoneNumber(friend.phone)}'></a>
+					<a href='tel:${reformatPhoneNumber(friend.phone)}' class="phone__button button" 
+					   data-title='${reformatPhoneNumber(friend.phone)}'></a>
 				</div>
 				<div class="card__row column">
 					<h3 class="card__name">${friend.firstName} ${friend.lastName}</h3>
@@ -139,8 +146,12 @@ function getFriendCardTemplate(friend) {
 			</div>`;
 }
 
-function reformatPhoneNumber(number){
-	return number.replace(/[^0-9]+/g, '').replace(/.(\d{3})/g, '$1-').replace(/(^\d{3,3})-(.\d+)/,  '+($1)-$2').replace(/[-]+$/g, '');
+function reformatPhoneNumber(number) {
+	return number
+		.replace(/[^0-9]+/g, "")
+		.replace(/.(\d{3})/g, "$1-")
+		.replace(/(^\d{3,3})-(.\d+)/, "+($1)-$2")
+		.replace(/[-]+$/g, "");
 }
 
 function getDate(date) {
@@ -163,14 +174,36 @@ function getResponseErrorMessage(status, statusText) {
 }
 
 function setAgeLimit(ageLimit, limitInputId, limitType) {
-	const limitInput =	document.getElementById(limitInputId);
+	const limitInput = document.getElementById(limitInputId);
 	limitInput[limitType] = ageLimit;
-	setInputLimitValue(limitInput, limitInputId, limitType, 'minAge', 'min', ageLimit);
-	setInputLimitValue(limitInput, limitInputId, limitType, 'maxAge', 'max', ageLimit);
+	setInputLimitValue(
+		limitInput,
+		limitInputId,
+		limitType,
+		"minAge",
+		"min",
+		ageLimit
+	);
+	setInputLimitValue(
+		limitInput,
+		limitInputId,
+		limitType,
+		"maxAge",
+		"max",
+		ageLimit
+	);
 }
 
-function setInputLimitValue(limitInput, limitInputId, limitType, limitInputIdValue, limitTypeValue, ageLimit){
-	if(limitInputId === limitInputIdValue && limitType === limitTypeValue) limitInput.value = ageLimit;
+function setInputLimitValue(
+	limitInput,
+	limitInputId,
+	limitType,
+	limitInputIdValue,
+	limitTypeValue,
+	ageLimit
+) {
+	if (limitInputId === limitInputIdValue && limitType === limitTypeValue)
+		limitInput.value = ageLimit;
 }
 
 function getCertainAgeLimit(friendsArray, value) {
@@ -180,11 +213,12 @@ function getCertainAgeLimit(friendsArray, value) {
 		: sortedArray[sortedArray.length - 1].age;
 }
 
-function sortCards(e, friendsArray){
+function sortCards(e, friendsArray) {
 	if (e.target.classList.contains("list__item")) {
-		document.querySelector(".select__face-item").innerText = e.target.textContent; 
+		document.querySelector(".select__face-item").innerText =
+			e.target.textContent;
 		sortCardsArray(e.target.attributes.value.value, friendsArray);
-	}	
+	}
 }
 
 function sortCardsArray(condition, friendsArray) {
@@ -223,7 +257,9 @@ function findMatchesWithPropertiesValues(
 }
 
 function filterByGenderValue(genderList, friendsArray) {
-	return friendsArray.filter((friend) => genderList.some(gender => friend.gender === gender.value));
+	return friendsArray.filter((friend) =>
+		genderList.some((gender) => friend.gender === gender.value)
+	);
 }
 
 function filterByAgeLimits(minAge, maxAge, friendsArray) {
@@ -232,24 +268,26 @@ function filterByAgeLimits(minAge, maxAge, friendsArray) {
 	);
 }
 
-function filterByGender(e, friendsArray){
+function filterByGender(e, friendsArray) {
 	let checkboxes = document.querySelectorAll("input[type=checkbox]");
-		checkboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
-	return filterByGenderValue(checkboxes, friendsArray);	
+	checkboxes = Array.from(checkboxes).filter((checkbox) => checkbox.checked);
+	return filterByGenderValue(checkboxes, friendsArray);
 }
 
-function filterByAge(friendsArray){
+function filterByAge(friendsArray) {
 	const min = document.getElementById("minAge"),
 		max = document.getElementById("maxAge");
 	if (min.value && max.value) {
-		return filterByAgeLimits(min.value,	max.value, friendsArray);
+		return filterByAgeLimits(min.value, max.value, friendsArray);
 	}
 }
 
-checkFiltersChanged = (event) => ['list__item', 'number', 'checkbox']
-	.some(filter => event.target.className === filter);
+checkFiltersChanged = (event) =>
+	["list__item", "number", "checkbox"].some(
+		(filter) => event.target.className === filter
+	);
 
-function updateCards(event){
+function updateCards(event) {
 	if (checkFiltersChanged(event)) {
 		FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY;
 		sortCards(event, FRIENDS_ARRAY);
@@ -262,43 +300,39 @@ function updateCards(event){
 document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
 	const filtersContainer = document.querySelector(".filters__container");
 	filtersContainer.classList.toggle("display");
-	Array.from(filtersContainer.children).forEach(node=>{
-		node.classList.toggle('visible');
+	Array.from(filtersContainer.children).forEach((node) => {
+		node.classList.toggle("visible");
 	});
-	console.log(filtersContainer);
 });
 
 document.querySelector("#sort").addEventListener("click", (e) => {
 	document.querySelector(".select__list").classList.toggle("visible");
-});	
+});
 
 document.querySelector("#search").addEventListener("input", (e) => {
 	const inputString = e.target.value,
 		filteredArray = findMatchesWithPropertiesValues(
-			["firstName", "lastName", "email", "username","country"],
+			["firstName", "lastName", "email", "username", "country"],
 			FRIENDS_ARRAY,
 			inputString
 		);
 	appendFriendsCards(filteredArray);
 });
 
-window.addEventListener("beforeunload", () => {
-	["#search", "#minAge", "#maxAge"].forEach(
-		(element) => (document.querySelector(element).value = "")
-	);
-	document.querySelector('#female').checked = 'true';
-	document.querySelector('#male').checked = 'true';
-});
+document.querySelector(".filters__container").addEventListener("click", (event) => {
+		updateCards(event);
+	});
 
-document.querySelector('.filters__container').addEventListener("click", event =>{
-	console.log(event.target);
-	updateCards(event);
-});
-
-document.querySelectorAll('.number').forEach(ageInput => {
-	ageInput.addEventListener('change', event =>{
+document.querySelectorAll(".number").forEach((ageInput) => {
+	ageInput.addEventListener("change", (event) => {
 		updateCards(event);
 	});
 });
 
-
+window.addEventListener("beforeunload", () => {
+	["#search", "#minAge", "#maxAge"].forEach(
+		(element) => (document.querySelector(element).value = "")
+	);
+	document.querySelector("#female").checked = "true";
+	document.querySelector("#male").checked = "true";
+});

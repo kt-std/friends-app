@@ -12,7 +12,7 @@
 }
 
 :root {
-	--animation-duration: .5s;
+    --animation-duration: .5s;
     --border-radius: 5px;
     --logo-text: #666;
     --color-accent: #7CB342;
@@ -63,7 +63,7 @@ body {
     box-shadow: var(--shadow);
 }
 
-.header__container {	
+.header__container {
     justify-content: space-between;
     align-items: center;
     box-sizing: border-box;
@@ -182,28 +182,28 @@ body {
 
 .button[data-title]:hover::after,
 .info:hover:after {
-  animation: opacity var(--animation-duration);
-  content: attr(data-title);
-  padding: 10px var(--padding);
-  border: 1px solid var(--border-color);
-  box-sizing: border-box;
-  min-width: 100px;
-  text-align: center;
-  white-space: nowrap;
-  background-color: white;
-  position: absolute;
-  z-index: 1000;
-  bottom: -101%;
-  color: var(--username-color);
-  border-radius: var(--border-radius);
-  font-size: var(--font-small);
-  left: 100%;
+    animation: opacity var(--animation-duration);
+    content: attr(data-title);
+    padding: 10px var(--padding);
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    min-width: 100px;
+    text-align: center;
+    white-space: nowrap;
+    background-color: white;
+    position: absolute;
+    z-index: 1000;
+    bottom: -101%;
+    color: var(--username-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-small);
+    left: 100%;
 }
 
-@keyframes opacity{
-    0%{opacity: 0};
-    100%{opacity: 1};
-} 
+@keyframes opacity {
+    0% { opacity: 0 };
+    100% { opacity: 1 };
+}
 
 .card__image {
     height: 80px;
@@ -211,19 +211,21 @@ body {
     border-radius: 50%;
     filter: saturate(0);
 }
-.info{
+
+.info {
     box-sizing: border-box;
     width: 40px;
     height: 25px;
     margin-right: 10px;
     display: flex;
     position: relative;
-    align-items: center; 
+    align-items: center;
     justify-content: center;
     cursor: pointer;
     font-size: var(--font-small);
 }
-.info:before{
+
+.info:before {
     position: absolute;
     box-sizing: border-box;
     width: 25px;
@@ -239,10 +241,12 @@ body {
     content: '?';
     transition: var(--animation-duration);
 }
-.info:hover:before{
+
+.info:hover:before {
     border-color: var(--color-accent);
 }
-.info:hover:after{
+
+.info:hover:after {
     bottom: 0;
     text-align: left;
     white-space: normal;
@@ -250,6 +254,7 @@ body {
     width: 200px;
     content: 'Searching for first name, last name, username, email and location is allowed';
 }
+
 .column {
     flex-direction: column;
 }
@@ -438,10 +443,12 @@ body {
     background-color: var(--color-accent);
     color: white;
 }
-.more__button:hover{
+
+.more__button:hover {
     box-shadow: var(--shadow);
 }
-.more__button{
+
+.more__button {
     margin-top: var(--margin);
 }
 
@@ -465,7 +472,8 @@ body {
     box-sizing: border-box;
     padding: 0 var(--padding);
 }
-.filters__container > *{
+
+.filters__container>* {
     padding: var(--padding) 0;
 }
 
@@ -555,8 +563,9 @@ body {
     flex-direction: column;
     margin-right: var(--margin);
 }
+
 .filter__item:last-of-type,
-.gender__filter> .filter__item:last-of-type{
+.gender__filter>.filter__item:last-of-type {
     margin-right: 0;
 }
 
@@ -644,9 +653,8 @@ body {
     }
 }
 
-@media (min-width: 600px) and (max-width: 700px){
+@media (min-width: 600px) and (max-width: 700px) {
     .filters__container {
-        
         flex-direction: row;
     }
 }
@@ -654,12 +662,13 @@ body {
 
 .age__filter,
 .gender__filter,
-.select__item{
+.select__item {
     visibility: hidden;
     transition: .5s;
     opacity: 0;
 }
-.visible{
+
+.visible {
     opacity: 1;
     visibility: visible;
 }
