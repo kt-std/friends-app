@@ -116,9 +116,9 @@ function flattenFriendProperties(friendsArray) {
 function getFriendCardTemplate(friend) {
 	return `<div class="card__container shadow">
 				<div class="card__row around">
-					<a href='mailto:${friend.email}' class="email__button button"></a>
+					<a href='mailto:${friend.email}' class="email__button button" data-title='${friend.email}'></a>
 					<img src="${friend.image}" class="card__image">
-					<a href='tel:${friend.phone}' class="phone__button button"></a>
+					<a href='tel:${friend.phone}' class="phone__button button" data-title='${friend.phone}'></a>
 				</div>
 				<div class="card__row column">
 					<h3 class="card__name">${friend.firstName} ${friend.lastName}</h3>
