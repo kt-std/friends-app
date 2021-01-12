@@ -35,9 +35,11 @@ function getFriends() {
 				initializeAgeLimits(FRIENDS_ARRAY);
 			}
 		})
-		.catch((error) =>
-			appendErrorMessage(`${error} <br> Try to reload the page!`)
-		);
+		.catch((error) => {
+			appendErrorMessage(`${error} <br> Try to reload the page!`);
+			document.querySelector(".main__container").classList.toggle("display-none");
+			document.querySelector(".more__button").classList.toggle("display-none");
+		});
 }
 
 getFriends();
