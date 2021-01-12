@@ -2,7 +2,12 @@ let FRIENDS_ARRAY = [],
 	INITIAL_FRIENDS_ARRAY = [];
 const USERS_AMOUNT = 24,
 	API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`,
+	MIN_AGE_INPUT_ID = "minAge",
+	MAX_AGE_INPUT_ID = "maxAge",
 	CARDS_CONTAINER = document.querySelector(".cards__container"),
+	SELECT_CONTAINER = document.querySelector(".select__container"),
+	FILTERS_CONTAINER = document.querySelector(".filters__container"),
+	OPTIONS_CONTAINER = document.querySelector(".select__list"),
 	TOTAL_COUNTER = document.querySelector(".amount");
 
 function getFriends() {
@@ -37,7 +42,6 @@ function getFriends() {
 
 getFriends();
 
-
 function setTotalCounter(friendsArray) {
 	TOTAL_COUNTER.innerText = `${friendsArray.length} Totals`;
 	if (!friendsArray.length) {
@@ -46,10 +50,9 @@ function setTotalCounter(friendsArray) {
 }
 
 function initializeAgeLimits(friendsArray) {
-	setAgeLimit(getCertainAgeLimit(friendsArray, 'min'), 'minAge', 'min');
-	setAgeLimit(getCertainAgeLimit(friendsArray, 'max'), 'minAge', 'max');
-	setAgeLimit(getCertainAgeLimit(friendsArray, 'min'), 'maxAge', 'min');
-	setAgeLimit(getCertainAgeLimit(friendsArray, 'max'), 'maxAge', 'max');
+	const ageLimits = getAgeLimits(friendsArray);
+	setAgeLimits(ageLimits, MIN_AGE_INPUT_ID);
+	setAgeLimits(ageLimits, MAX_AGE_INPUT_ID);
 }
 
 function appendNoResultsMessage() {
@@ -79,8 +82,8 @@ function appendErrorMessage(errorText) {
 	img.classList.add("error__image");
 	img.src = "assets/error.svg";
 	div.appendChild(img);
-	document.querySelector(".main__row").style.display = "none";
-	document.querySelector(".more__button").style.display = "none";
+	document.querySelector(".main__row").classList.toggle("display-none");
+	document.querySelector(".more__button").classList.toggle("display-none");
 	document.body.append(div);
 }
 
@@ -137,8 +140,8 @@ function getFriendCardTemplate(friend) {
 function reformatPhoneNumber(number) {
 	return number
 		.replace(/[^0-9]+/g, "") //leave only numbers in phone number
-		.replace(/.(\d{3})/g, "$1-") // add dashes between groups of digits consisting of 3 numbers 
-		.replace(/(^\d{3,3})-(.\d+)/, "+($1)-$2") // get first group of 3 digits and place them inside brackets 
+		.replace(/.(\d{3})/g, "$1-") // add dashes between groups of digits consisting of 3 numbers
+		.replace(/(^\d{3,3})-(.\d+)/, "+($1)-$2") // get first group of 3 digits and place them inside brackets
 		.replace(/[-]+$/g, ""); //remove extra dash if it appers after the last group of numbers
 }
 
@@ -161,26 +164,32 @@ function getResponseErrorMessage(status, statusText) {
 			<h2 class='error__code'>${status}: ${statusText}</h2>`;
 }
 
-function setAgeLimit(ageLimit, limitInputId, limitType) {
+function setAgeLimits(ageLimits, limitInputId) {
 	const limitInput = document.getElementById(limitInputId);
-	limitInput[limitType] = ageLimit;
-	if (limitInputId === "minAge" && limitType === "min") limitInput.value = ageLimit;
-	if (limitInputId === "maxAge" && limitType === "max") limitInput.value = ageLimit;
+	limitInput.min = ageLimits.min;
+	limitInput.max = ageLimits.max;
+	if (limitInputId === MIN_AGE_INPUT_ID) limitInput.value = ageLimits.min;
+	if (limitInputId === MAX_AGE_INPUT_ID) limitInput.value = ageLimits.max;
 }
 
-function getCertainAgeLimit(friendsArray, value) {
+function getAgeLimits(friendsArray) {
 	const sortedArray = friendsArray.sort((a, b) => a.age - b.age);
-	return value === "min"
-		? sortedArray[0].age
-		: sortedArray[sortedArray.length - 1].age;
+	return {
+		min: sortedArray[0].age,
+		max: sortedArray[sortedArray.length - 1].age,
+	};
 }
 
 function sortCards(e, friendsArray) {
 	if (e.target.classList.contains("list__item")) {
-		document.querySelector(".select__face-item").innerText =
-			e.target.textContent;
+		updateSelectText(e.target.textContent);
+		SELECT_CONTAINER.attributes["option-selected"].value = true;
 		sortCardsArray(e.target.attributes.value.value, friendsArray);
 	}
+}
+
+function updateSelectText(text) {
+	SELECT_CONTAINER.innerText = text;
 }
 
 function sortCardsArray(condition, friendsArray) {
@@ -225,8 +234,8 @@ function filterByGender(e, friendsArray) {
 }
 
 function filterByAge(friendsArray) {
-	const min = document.getElementById("minAge"),
-		max = document.getElementById("maxAge");
+	const min = document.getElementById(MIN_AGE_INPUT_ID),
+		max = document.getElementById(MAX_AGE_INPUT_ID);
 	if (min.value && max.value) {
 		return friendsArray.filter(
 			(friend) => friend.age >= min.value && friend.age <= max.value
@@ -250,8 +259,152 @@ function updateCards(event) {
 	}
 }
 
+function checkOptionsSelected() {
+	return SELECT_CONTAINER.attributes["option-selected"].value === "true";
+}
+
+function checkOptionsVisibility() {
+	return OPTIONS_CONTAINER.classList.contains("visible");
+}
+
+function resetOptionTabindex(option) {
+	option.tabIndex = -1;
+	option.removeAttribute("aria-selected");
+}
+
+function getSelectOption(selectText) {
+	return Array.from(OPTIONS_CONTAINER.children).filter(
+		(option) => option.textContent === selectText)[0];
+}
+
+function higlightSelectedOption(itemToSelect) {
+	itemToSelect.tabIndex = 0;
+	setTimeout(() => {
+		itemToSelect.focus();
+	}, 100);
+	itemToSelect.setAttribute("aria-selected", "true");
+	updateSelectText(itemToSelect.textContent);
+}
+
+function focusOnItem(buttonPressed) {
+	const selectedItem = document.activeElement;
+	if (buttonPressed === "ArrowUp") {
+		switch (true) {
+			case selectedItem.previousElementSibling &&
+				isSelectOption(selectedItem):
+				higlightSelectedOption(selectedItem.previousElementSibling);
+				break;
+			case !selectedItem.previousElementSibling:
+				higlightSelectedOption(OPTIONS_CONTAINER.firstElementChild);
+				break;
+			case !isSelectOption(selectedItem):
+				higlightSelectedOption(OPTIONS_CONTAINER.lastElementChild);
+				break;
+		}
+	} else if (buttonPressed === "ArrowDown") {
+		switch (true) {
+			case selectedItem.nextElementSibling &&
+				isSelectOption(selectedItem):
+				higlightSelectedOption(selectedItem.nextElementSibling);
+				break;
+			case !selectedItem.nextElementSibling:
+				higlightSelectedOption(OPTIONS_CONTAINER.lastElementChild);
+				break;
+			case !isSelectOption(selectedItem):
+				higlightSelectedOption(OPTIONS_CONTAINER.firstElementChild);
+		}
+	}
+	resetOptionTabindex(selectedItem);
+}
+
+function isSelectOption(selectedItem) {
+	return (
+		selectedItem.classList.contains("select__list") ||
+		selectedItem.classList.contains("list__item")
+	);
+}
+
+function observeOptionsListVisibility() {
+	const options = { attributes: true, attributesFilter: ["classList"] },
+		callback = function (mutationsList, observer) {
+			for (const mutation of mutationsList) {
+				if (mutation.type === "attributes") {
+					if (
+						mutation.target.classList.contains("visible") &&
+						!SELECT_CONTAINER.getAttribute("aria-expanded")
+					) {
+						SELECT_CONTAINER.setAttribute("aria-expanded", "true");
+					}
+					if (
+						!mutation.target.classList.contains("visible") &&
+						SELECT_CONTAINER.getAttribute("aria-expanded")
+					) {
+						SELECT_CONTAINER.removeAttribute("aria-expanded");
+					}
+				}
+			}
+		};
+	const observer = new MutationObserver(callback);
+	observer.observe(OPTIONS_CONTAINER, options);
+}
+
+SELECT_CONTAINER.addEventListener("focusout", (e) => {
+	if (
+		checkOptionsVisibility() &&
+		!e.relatedTarget.classList.contains("list__item") &&
+		!e.relatedTarget.classList.contains("select__container")
+	)
+		OPTIONS_CONTAINER.classList.toggle("visible");
+});
+
+document.addEventListener("keydown", (keyEvent) => {
+	if (keyEvent.target === SELECT_CONTAINER) {
+		if (keyEvent.code === "Space" || keyEvent.code === "Enter") {
+			OPTIONS_CONTAINER.classList.toggle("visible");
+			if (checkOptionsSelected()) {
+				higlightSelectedOption(
+					getSelectOption(SELECT_CONTAINER.textContent)
+				);
+			} else {
+				higlightSelectedOption(
+					getSelectOption(
+						OPTIONS_CONTAINER.firstElementChild.textContent
+					)
+				);
+			}
+		}
+	}
+	if (
+		checkOptionsVisibility() &&
+		(keyEvent.code == "ArrowUp" || keyEvent.code == "ArrowDown")
+	) {
+		keyEvent.preventDefault();
+		focusOnItem(keyEvent.code);
+	}
+	if (
+		keyEvent.target.classList.contains("list__item") &&
+		(keyEvent.code === "Space" ||
+			keyEvent.code === "Enter" ||
+			keyEvent.code === "Escape")
+	) {
+		const selectedOption = document.activeElement;
+		resetOptionTabindex(selectedOption);
+		OPTIONS_CONTAINER.classList.toggle("visible");
+		updateCards(keyEvent);
+	}
+	SELECT_CONTAINER.tabIndex = 0;
+});
+
 document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
-	document.querySelector(".filters__container").classList.toggle("display");
+	FILTERS_CONTAINER.classList.toggle("display");
+});
+
+document.addEventListener("click", (e) => {
+	if (checkOptionsVisibility()) {
+		if (e.target != OPTIONS_CONTAINER && e.target != SELECT_CONTAINER) {
+			OPTIONS_CONTAINER.classList.toggle("visible");
+		}
+	}
 });
 
 document.querySelector("#sort").addEventListener("click", (e) => {
@@ -259,7 +412,7 @@ document.querySelector("#sort").addEventListener("click", (e) => {
 		e.target.classList.contains("list__item") ||
 		e.target.classList.contains("select__container")
 	) {
-		document.querySelector(".select__list").classList.toggle("visible");
+		OPTIONS_CONTAINER.classList.toggle("visible");
 	}
 });
 
@@ -273,9 +426,7 @@ document.querySelector("#search").addEventListener("input", (e) => {
 	appendFriendsCards(filteredArray);
 });
 
-document.querySelector(".filters__container").addEventListener("click", (event) => {
-		updateCards(event);
-	});
+FILTERS_CONTAINER.addEventListener("click", (e) => updateCards(e));
 
 document.querySelectorAll(".number").forEach((ageInput) => {
 	ageInput.addEventListener("change", (event) => {
@@ -287,6 +438,8 @@ window.addEventListener("beforeunload", () => {
 	["#search", "#minAge", "#maxAge"].forEach(
 		(element) => (document.querySelector(element).value = "")
 	);
+
+	SELECT_CONTAINER.attributes["option-selected"].value = "false";
 	document.querySelector("#female").checked = "true";
 	document.querySelector("#male").checked = "true";
 });
