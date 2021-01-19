@@ -22,6 +22,7 @@ function getFriends() {
                         response.statusText
                     )
                 );
+                return response.json();
             }
         })
         .then((responseBody) => {
@@ -228,8 +229,7 @@ function findMatchesWithPropertiesValues(
 }
 
 function filterByGender(e, friendsArray) {
-    let checkboxes = document.querySelectorAll("input[type=checkbox]");
-    checkboxes = Array.from(checkboxes).filter((checkbox) => checkbox.checked);
+    let checkboxes = Array.from(document.querySelectorAll("input[type=checkbox]:checked"));
     return friendsArray.filter((friend) =>
         checkboxes.some((gender) => friend.gender === gender.value)
     );
@@ -238,17 +238,14 @@ function filterByGender(e, friendsArray) {
 function filterByAge(friendsArray) {
     const min = document.getElementById(MIN_AGE_INPUT_ID),
         max = document.getElementById(MAX_AGE_INPUT_ID);
-    if (min.value && max.value) {
-        return friendsArray.filter(
-            (friend) => friend.age >= min.value && friend.age <= max.value
-        );
-    }
+    return min.value && max.value
+    	? friendsArray.filter((friend) => friend.age >= min.value && friend.age <= max.value)
+    	: friendsArray;
 }
 
 function checkFiltersChanged(event) {
     return ["list__item", "number", "checkbox"].some(
-        (filter) => event.target.className === filter
-    );
+        (filter) => event.target.className === filter);	
 }
 
 function updateCards(event) {
