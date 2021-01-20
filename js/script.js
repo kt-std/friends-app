@@ -272,8 +272,8 @@ function resetOptionTabindex(option) {
 }
 
 function getSelectOption(selectText) {
-    return Array.from(OPTIONS_CONTAINER.children).filter(
-        (option) => option.textContent === selectText)[0];
+    return Array.from(OPTIONS_CONTAINER.children).find(
+        (option) => option.textContent === selectText);
 }
 
 function higlightSelectedOption(itemToSelect) {
