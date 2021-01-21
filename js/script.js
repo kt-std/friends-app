@@ -8,6 +8,7 @@ const USERS_AMOUNT = 24,
     SELECT_CONTAINER = document.querySelector(".select__container"),
     FILTERS_CONTAINER = document.querySelector(".filters__container"),
     OPTIONS_CONTAINER = document.querySelector(".select__list"),
+    OPTIONS_LIST = document.querySelectorAll(".list__label"),
     TOTAL_COUNTER = document.querySelector(".amount");
 
 function getFriends() {
@@ -184,15 +185,16 @@ function getAgeLimits(friendsArray) {
 }
 
 function sortCards(e, friendsArray) {
-    if (e.target.classList.contains("list__item")) {
-        updateSelectText(e.target.textContent);
+    if (e.target.classList.contains("list__label")) {
+        updateSelectText(e.target.innerText);
         SELECT_CONTAINER.attributes["option-selected"].value = true;
         sortCardsArray(e.target.attributes.value.value, friendsArray);
     }
 }
 
 function updateSelectText(text) {
-    SELECT_CONTAINER.innerText = text;
+    console.log(text);
+    SELECT_CONTAINER.textContent = text;
 }
 
 function sortCardsArray(condition, friendsArray) {
@@ -229,7 +231,7 @@ function findMatchesWithPropertiesValues(
 }
 
 function filterByGender(e, friendsArray) {
-    let checkboxes = Array.from(document.querySelectorAll("input[type=checkbox]:checked"));
+    let checkboxes = Array.from(document.querySelectorAll("input[type=checkbox]:checked.checkbox"));
     return friendsArray.filter((friend) =>
         checkboxes.some((gender) => friend.gender === gender.value)
     );
@@ -244,7 +246,7 @@ function filterByAge(friendsArray) {
 }
 
 function checkFiltersChanged(event) {
-    return ["list__item", "number", "checkbox"].some(
+    return ["list__label", "number", "checkbox"].some(
         (filter) => event.target.className === filter);	
 }
 
@@ -267,26 +269,26 @@ function checkOptionsVisibility() {
 }
 
 function resetOptionTabindex(option) {
-    option.tabIndex = -1;
+    document.getElementById(itemToSelect.for).checked = false;
+    itemToSelect.classList.remove('focus');
     option.removeAttribute("aria-selected");
 }
 
 function getSelectOption(selectText) {
-    return Array.from(OPTIONS_CONTAINER.children).find(
-        (option) => option.textContent === selectText);
+    return Array.from(OPTIONS_LIST).find(
+        (option) => option.innerText === selectText);
 }
 
 function higlightSelectedOption(itemToSelect) {
-    itemToSelect.tabIndex = 0;
-    setTimeout(() => {
-        itemToSelect.focus();
-    }, 100);
+    itemToSelect.classList.add('focus');
     itemToSelect.setAttribute("aria-selected", "true");
     updateSelectText(itemToSelect.textContent);
 }
 
+
 function focusOnItem(buttonPressed) {
     const selectedItem = document.activeElement;
+    console.log(selectedItem);
     if (buttonPressed === "ArrowUp") {
         switch (true) {
             case selectedItem.previousElementSibling &&
@@ -319,7 +321,7 @@ function focusOnItem(buttonPressed) {
 function isSelectOption(selectedItem) {
     return (
         selectedItem.classList.contains("select__list") ||
-        selectedItem.classList.contains("list__item")
+        selectedItem.classList.contains("list__label")
     );
 }
 
@@ -350,7 +352,7 @@ function observeOptionsListVisibility() {
 SELECT_CONTAINER.addEventListener("focusout", (e) => {
     if (
         checkOptionsVisibility() &&
-        !e.relatedTarget.classList.contains("list__item") &&
+        !e.relatedTarget.classList.contains("list__value") &&
         !e.relatedTarget.classList.contains("select__container")
     )
         OPTIONS_CONTAINER.classList.toggle("visible");
@@ -359,16 +361,17 @@ SELECT_CONTAINER.addEventListener("focusout", (e) => {
 document.addEventListener("keydown", (keyEvent) => {
     if (keyEvent.target === SELECT_CONTAINER) {
         if (keyEvent.code === "Space" || keyEvent.code === "Enter") {
+            keyEvent.preventDefault();
             OPTIONS_CONTAINER.classList.toggle("visible");
             if (checkOptionsSelected()) {
                 higlightSelectedOption(
-                    getSelectOption(SELECT_CONTAINER.textContent)
+                    getSelectOption(SELECT_CONTAINER.innerText)
                 );
             } else {
+                console.log("no options selected", OPTIONS_LIST);
+                console.log(OPTIONS_LIST[0].textContent);
                 higlightSelectedOption(
-                    getSelectOption(
-                        OPTIONS_CONTAINER.firstElementChild.textContent
-                    )
+                    OPTIONS_LIST[0]
                 );
             }
         }
@@ -381,7 +384,7 @@ document.addEventListener("keydown", (keyEvent) => {
         focusOnItem(keyEvent.code);
     }
     if (
-        keyEvent.target.classList.contains("list__item") &&
+        keyEvent.target.classList.contains("list__label") &&
         (keyEvent.code === "Space" ||
             keyEvent.code === "Enter" ||
             keyEvent.code === "Escape")
@@ -399,6 +402,7 @@ document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
 });
 
 document.addEventListener("click", (e) => {
+    console.log(e.target);
     if (checkOptionsVisibility()) {
         if (e.target != OPTIONS_CONTAINER && e.target != SELECT_CONTAINER) {
             OPTIONS_CONTAINER.classList.toggle("visible");
@@ -408,9 +412,9 @@ document.addEventListener("click", (e) => {
 
 document.querySelector("#sort").addEventListener("click", (e) => {
     if (
-        e.target.classList.contains("list__item") ||
+        e.target.classList.contains("list__label") ||
         e.target.classList.contains("select__container")
-    ) {
+    ) { 
         OPTIONS_CONTAINER.classList.toggle("visible");
     }
 });

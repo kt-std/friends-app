@@ -30,10 +30,22 @@
                 <span class="select__face-item select__container" tabindex='0' option-selected="false" id="listLabel" 
                     aria-haspopup="listbox" aria-labelledby="selectLabel listLabel">Sorting type</span>
                 <ul name="sort" role="listbox" class="select__list" aria-labelledby="selectLabel" tabindex="-1">
-                    <li value="namesAscending" role="option" tabindex="-1" class="list__item">Names: A first</li>
-                    <li value="namesDescending" role="option" tabindex="-1" class="list__item">Names: Z first</li>
-                    <li value="ageAscending" role="option" tabindex="-1" class="list__item">Age: ascending</li>
-                    <li value="ageDescending" role="option" tabindex="-1" class="list__item">Age: descending</li>
+                   <li class="list__item">
+                        <input type="checkbox" class="list__input" id="namesAscending">
+                        <label role="option" class="list__label" for="namesAscending" value="namesAscending">Names: A first</label>
+                    </li>
+                    <li class="list__item">
+                        <input type="checkbox" class="list__input" id="namesDescending">
+                        <label role="option" class="list__label" for="namesDescending" value="namesDescending">Names: Z first</label>
+                    </li>
+                    <li class="list__item">
+                        <input type="checkbox" class="list__input" id="ageAscending">
+                        <label role="option" class="list__label" for="ageAscending" value="ageAscending">Age: ascending</label>
+                    </li>
+                    <li class="list__item">
+                        <input type="checkbox" class="list__input" id="ageDescending">
+                        <label role="option" class="list__label" for="ageDescending" value="ageDescending">Age: descending</label>
+                    </li>
                 </ul>
             </fieldset>
             <fieldset class="gender__filter fieldset" id="genderFilter">
