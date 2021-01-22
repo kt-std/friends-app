@@ -562,12 +562,12 @@ body {
     width: 200px;
     box-sizing: border-box;
     box-shadow: 0 0 8px rgba(0, 0, 0, .2);
-    visibility: visible;
+    visibility: hidden;
     transition: var(--animation-duration);
-    opacity: 1;
+    opacity: 0;
 }
 
-.list_input
+
 .visible,
 .display>* {
     visibility: visible;
@@ -576,27 +576,33 @@ body {
 .list__item{
     width: 100%;
 }
-/*
+
 .list__input{
     -webkit-appearance:none;
     -moz-appearance: none;
     appearance: none;
-}*/
-
+    position: absolute;
+    height: 0;
+    width: 0;
+}
 .list__label{
     display: inline-block;
     box-sizing: border-box;
     color: var(--username-color);
     width: 100%;
     padding: 10px var(--padding);
-    transition: var(--animation-duration);
+    transition: .2s;
     font-size: var(--font-small);
     border-bottom: 1px solid var(--border-color);
-}
-.list__label:focus,
-.list__label:hover{
     cursor: pointer;
+}
+.list__label:focus{
     background-color: var(--background-color);
+}
+.list__label:hover,
+.list__input:checked ~ .list__label:hover{
+    background-color: var(--color-accent);
+    color: white;
 }
 .focus{
     background-color: var(--background-color);

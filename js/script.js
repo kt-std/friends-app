@@ -1,4 +1,5 @@
 let FRIENDS_ARRAY = [],
+    selectedOption,
     INITIAL_FRIENDS_ARRAY = [];
 const USERS_AMOUNT = 24,
     API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`,
@@ -185,16 +186,17 @@ function getAgeLimits(friendsArray) {
 }
 
 function sortCards(e, friendsArray) {
-    if (e.target.classList.contains("list__label")) {
-        updateSelectText(e.target.innerText);
+    if (e.target.classList.contains("list__label")||e.target.classList.contains("select__container")) {
+        updateSelectText(getSelectOption(selectedOption));
+        higlightSelectedOption(getSelectOption(selectedOption));
         SELECT_CONTAINER.attributes["option-selected"].value = true;
         sortCardsArray(e.target.attributes.value.value, friendsArray);
     }
 }
 
-function updateSelectText(text) {
-    console.log(text);
-    SELECT_CONTAINER.textContent = text;
+function updateSelectText(itemToSelect) {
+    SELECT_CONTAINER.textContent = itemToSelect.textContent;
+    SELECT_CONTAINER.setAttribute("value", itemToSelect.attributes.value.value);
 }
 
 function sortCardsArray(condition, friendsArray) {
@@ -246,12 +248,13 @@ function filterByAge(friendsArray) {
 }
 
 function checkFiltersChanged(event) {
-    return ["list__label", "number", "checkbox"].some(
-        (filter) => event.target.className === filter);	
+    return ["list__label", "select__container", "number", "checkbox"].some(
+        (filter) => event.target.classList.contains(filter));	
 }
 
 function updateCards(event) {
     if (checkFiltersChanged(event)) {
+        resetOptions(selectedOption);
         FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY;
         sortCards(event, FRIENDS_ARRAY);
         FRIENDS_ARRAY = filterByAge(FRIENDS_ARRAY);
@@ -268,61 +271,56 @@ function checkOptionsVisibility() {
     return OPTIONS_CONTAINER.classList.contains("visible");
 }
 
-function resetOptionTabindex(option) {
-    document.getElementById(itemToSelect.for).checked = false;
-    itemToSelect.classList.remove('focus');
+function resetOptions(selectedOption){
+    Array.from(OPTIONS_LIST).forEach(option =>{
+        if (option.textContent != selectedOption){
+            document.getElementById(option.htmlFor).checked = false;
+        }
+    });
+}
+
+function removeAriaAttribute(option) {
     option.removeAttribute("aria-selected");
 }
 
 function getSelectOption(selectText) {
     return Array.from(OPTIONS_LIST).find(
-        (option) => option.innerText === selectText);
+        (option) => option.textContent === selectText);
 }
 
 function higlightSelectedOption(itemToSelect) {
-    itemToSelect.classList.add('focus');
     itemToSelect.setAttribute("aria-selected", "true");
-    updateSelectText(itemToSelect.textContent);
+    document.getElementById(itemToSelect.htmlFor).checked = true;
+    updateSelectText(itemToSelect);
 }
 
-
 function focusOnItem(buttonPressed) {
-    const selectedItem = document.activeElement;
-    console.log(selectedItem);
+    const optionsListArray = Array.from(OPTIONS_LIST),
+        selectedItem = optionsListArray.find((listItem) => listItem.textContent === selectedOption),
+        selectedItemIndex = Array.from(OPTIONS_LIST).indexOf(selectedItem);
     if (buttonPressed === "ArrowUp") {
         switch (true) {
-            case selectedItem.previousElementSibling &&
-                isSelectOption(selectedItem):
-                higlightSelectedOption(selectedItem.previousElementSibling);
+            case selectedItemIndex > 0:
+                higlightSelectedOption(optionsListArray[selectedItemIndex-1]);
+                selectedOption = optionsListArray[selectedItemIndex-1].textContent;
+                resetOptions(selectedOption);
+                removeAriaAttribute(selectedItem);
                 break;
-            case !selectedItem.previousElementSibling:
-                higlightSelectedOption(OPTIONS_CONTAINER.firstElementChild);
-                break;
-            case !isSelectOption(selectedItem):
-                higlightSelectedOption(OPTIONS_CONTAINER.lastElementChild);
+            case selectedItemIndex === 0:
                 break;
         }
     } else if (buttonPressed === "ArrowDown") {
         switch (true) {
-            case selectedItem.nextElementSibling &&
-                isSelectOption(selectedItem):
-                higlightSelectedOption(selectedItem.nextElementSibling);
+            case selectedItemIndex < optionsListArray.length-1:
+                higlightSelectedOption(optionsListArray[selectedItemIndex+1]);
+                selectedOption = optionsListArray[selectedItemIndex+1].textContent;
+                resetOptions(selectedOption);
+                removeAriaAttribute(selectedItem);
                 break;
-            case !selectedItem.nextElementSibling:
-                higlightSelectedOption(OPTIONS_CONTAINER.lastElementChild);
+            case selectedItemIndex === optionsListArray.length-1:
                 break;
-            case !isSelectOption(selectedItem):
-                higlightSelectedOption(OPTIONS_CONTAINER.firstElementChild);
         }
     }
-    resetOptionTabindex(selectedItem);
-}
-
-function isSelectOption(selectedItem) {
-    return (
-        selectedItem.classList.contains("select__list") ||
-        selectedItem.classList.contains("list__label")
-    );
 }
 
 function observeOptionsListVisibility() {
@@ -352,6 +350,7 @@ function observeOptionsListVisibility() {
 SELECT_CONTAINER.addEventListener("focusout", (e) => {
     if (
         checkOptionsVisibility() &&
+        e.relatedTarget !== null &&
         !e.relatedTarget.classList.contains("list__value") &&
         !e.relatedTarget.classList.contains("select__container")
     )
@@ -360,21 +359,29 @@ SELECT_CONTAINER.addEventListener("focusout", (e) => {
 
 document.addEventListener("keydown", (keyEvent) => {
     if (keyEvent.target === SELECT_CONTAINER) {
-        if (keyEvent.code === "Space" || keyEvent.code === "Enter") {
+        if ((keyEvent.code === "Space" || keyEvent.code === "Enter")){
             keyEvent.preventDefault();
-            OPTIONS_CONTAINER.classList.toggle("visible");
-            if (checkOptionsSelected()) {
-                higlightSelectedOption(
-                    getSelectOption(SELECT_CONTAINER.innerText)
-                );
-            } else {
-                console.log("no options selected", OPTIONS_LIST);
-                console.log(OPTIONS_LIST[0].textContent);
-                higlightSelectedOption(
-                    OPTIONS_LIST[0]
-                );
+            if (!checkOptionsVisibility()) {
+                OPTIONS_CONTAINER.classList.add("visible");
+                if (checkOptionsSelected()) {            
+                    higlightSelectedOption(
+                        getSelectOption(selectedOption)
+                    );
+                } else {            
+                    selectedOption = OPTIONS_LIST[0].textContent;
+                    higlightSelectedOption(
+                        OPTIONS_LIST[0]
+                    );
+                }
+            }else{            
+                 const selectedOption = document.querySelector('.list__input:checked');
+                 updateCards(keyEvent); 
+                 OPTIONS_CONTAINER.classList.remove("visible");  
             }
-        }
+        } 
+    }
+    if (keyEvent.code === "Escape" && checkOptionsVisibility()){
+        OPTIONS_CONTAINER.classList.remove("visible"); 
     }
     if (
         checkOptionsVisibility() &&
@@ -383,18 +390,7 @@ document.addEventListener("keydown", (keyEvent) => {
         keyEvent.preventDefault();
         focusOnItem(keyEvent.code);
     }
-    if (
-        keyEvent.target.classList.contains("list__label") &&
-        (keyEvent.code === "Space" ||
-            keyEvent.code === "Enter" ||
-            keyEvent.code === "Escape")
-    ) {
-        const selectedOption = document.activeElement;
-        resetOptionTabindex(selectedOption);
-        OPTIONS_CONTAINER.classList.toggle("visible");
-        updateCards(keyEvent);
-    }
-    SELECT_CONTAINER.tabIndex = 0;
+    resetOptions(selectedOption);
 });
 
 document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
@@ -402,7 +398,6 @@ document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
 });
 
 document.addEventListener("click", (e) => {
-    console.log(e.target);
     if (checkOptionsVisibility()) {
         if (e.target != OPTIONS_CONTAINER && e.target != SELECT_CONTAINER) {
             OPTIONS_CONTAINER.classList.toggle("visible");
@@ -415,6 +410,7 @@ document.querySelector("#sort").addEventListener("click", (e) => {
         e.target.classList.contains("list__label") ||
         e.target.classList.contains("select__container")
     ) { 
+        selectedOption = !SELECT_CONTAINER.attributes.value.value ? OPTIONS_LIST[0].textContent : e.target.textContent;
         OPTIONS_CONTAINER.classList.toggle("visible");
     }
 });
