@@ -318,29 +318,35 @@ function focusOnItem(buttonPressed) {
         selectedItemIndex = Array.from(OPTIONS_LIST).indexOf(selectedItem);
     if (buttonPressed === "ArrowUp") {
         switch (true) {
-            case selectedItemIndex > 0:
+            case !isFirstListItem(selectedItemIndex):
                 higlightSelectedOption(optionsListArray[selectedItemIndex - 1]);
                 selectedOption = optionsListArray[selectedItemIndex - 1].textContent;
                 resetOptions(selectedOption);
                 removeAriaSelectedAttribute(selectedItem);
                 break;
-            case selectedItemIndex === 0:
+            case !isFirstListItem(selectedItemIndex):
                 break;
         }
     } else if (buttonPressed === "ArrowDown") {
         switch (true) {
-            case selectedItemIndex < optionsListArray.length - 1:
+            case !isLastListItem(selectedItemIndex, optionsListArray):
                 higlightSelectedOption(optionsListArray[selectedItemIndex + 1]);
                 selectedOption = optionsListArray[selectedItemIndex + 1].textContent;
                 resetOptions(selectedOption);
                 removeAriaSelectedAttribute(selectedItem);
                 break;
-            case selectedItemIndex === optionsListArray.length - 1:
+            case isLastListItem(selectedItemIndex, optionsListArray):
                 break;
         }
     }
 }
 
+function isLastListItem(selectedItemIndex, optionsArray){
+    return selectedItemIndex === optionsArray.length - 1;
+}
+function isFirstListItem(selectedItemIndex){
+    return selectedItemIndex === 0;
+}
 
 function observeOptionsListVisibility() {
     const options = { attributes: true, attributesFilter: ["classList"] },
@@ -458,7 +464,6 @@ window.addEventListener("beforeunload", () => {
     ["#search", "#minAge", "#maxAge"].forEach(
         (element) => (document.querySelector(element).value = "")
     );
-
     SELECT_CONTAINER.attributes["select-modified"].value = "false";
     document.querySelector("#female").checked = "true";
     document.querySelector("#male").checked = "true";
