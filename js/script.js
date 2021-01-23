@@ -42,12 +42,8 @@ function getFriends() {
         })
         .catch((error) => {
             appendErrorMessage(`${error} <br> Try to reload the page!`);
-            document
-                .querySelector(".main__container")
-                .classList.toggle("display-none");
-            document
-                .querySelector(".more__button")
-                .classList.toggle("display-none");
+            document.querySelector(".main__container").classList.toggle("display-none");
+            document.querySelector(".more__button").classList.toggle("display-none");
         });
 }
 
@@ -209,12 +205,10 @@ function updateSelectText(itemToSelect) {
 function sortCardsArray(condition, friendsArray) {
     switch (condition) {
         case "namesDescending":
-            FRIENDS_ARRAY.sort((a, b) => b.firstName.localeCompare(a.firstName)
-            );
+            FRIENDS_ARRAY.sort((a, b) => b.firstName.localeCompare(a.firstName));
             break;
         case "namesAscending":
-            FRIENDS_ARRAY.sort((a, b) => a.firstName.localeCompare(b.firstName)
-            );
+            FRIENDS_ARRAY.sort((a, b) => a.firstName.localeCompare(b.firstName));
             break;
         case "ageDescending":
             FRIENDS_ARRAY.sort((a, b) => b.age - a.age);
@@ -242,9 +236,7 @@ function findMatchesWithPropertiesValues(
 }
 
 function filterByGender(e, friendsArray) {
-    let checkboxes = Array.from(
-        document.querySelectorAll("input[type=checkbox]:checked.checkbox")
-    );
+    let checkboxes = Array.from(document.querySelectorAll(".checkbox:checked"));
     return friendsArray.filter((friend) =>
         checkboxes.some((gender) => friend.gender === gender.value)
     );
@@ -269,7 +261,6 @@ function checkFiltersChanged(event) {
 
 function updateCards(event) {
     if (checkFiltersChanged(event)) {
-        resetOptions(selectedOption);
         FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY;
         sortCards(event, FRIENDS_ARRAY);
         FRIENDS_ARRAY = filterByAge(FRIENDS_ARRAY);
@@ -286,7 +277,7 @@ function checkOptionsVisibility() {
     return OPTIONS_CONTAINER.classList.contains("visible");
 }
 
-function resetOptions(selectedOption) {
+function resetPreviouslySelectedOptions(selectedOption) {
     Array.from(OPTIONS_LIST).forEach((option) => {
         if (option.textContent != selectedOption) {
             document.getElementById(option.htmlFor).checked = false;
@@ -321,7 +312,7 @@ function focusOnItem(buttonPressed) {
             case !isFirstListItem(selectedItemIndex):
                 higlightSelectedOption(optionsListArray[selectedItemIndex - 1]);
                 selectedOption = optionsListArray[selectedItemIndex - 1].textContent;
-                resetOptions(selectedOption);
+                resetPreviouslySelectedOptions(selectedOption);
                 removeAriaSelectedAttribute(selectedItem);
                 break;
             case !isFirstListItem(selectedItemIndex):
@@ -332,7 +323,7 @@ function focusOnItem(buttonPressed) {
             case !isLastListItem(selectedItemIndex, optionsListArray):
                 higlightSelectedOption(optionsListArray[selectedItemIndex + 1]);
                 selectedOption = optionsListArray[selectedItemIndex + 1].textContent;
-                resetOptions(selectedOption);
+                resetPreviouslySelectedOptions(selectedOption);
                 removeAriaSelectedAttribute(selectedItem);
                 break;
             case isLastListItem(selectedItemIndex, optionsListArray):
@@ -357,7 +348,7 @@ function observeOptionsListVisibility() {
                         mutation.target.classList.contains("visible") &&
                         !SELECT_CONTAINER.getAttribute("aria-expanded")
                     ) {
-                        resetOptions(selectedOption);
+                        resetPreviouslySelectedOptions(selectedOption);
                         updateSelectText(getSelectOption(selectedOption));
                         higlightSelectedOption(getSelectOption(selectedOption));
 
@@ -401,7 +392,6 @@ document.addEventListener("keydown", (keyEvent) => {
                     higlightSelectedOption(OPTIONS_LIST[0]);
                 }
             } else {
-                const selectedOption = document.querySelector(".list__input:checked");
                 updateCards(keyEvent);
                 OPTIONS_CONTAINER.classList.remove("visible");
             }
@@ -417,7 +407,7 @@ document.addEventListener("keydown", (keyEvent) => {
         keyEvent.preventDefault();
         focusOnItem(keyEvent.code);
     }
-    resetOptions(selectedOption);
+    resetPreviouslySelectedOptions(selectedOption);
 });
 
 document.querySelector("#showFiltersButton").addEventListener("click", (e) => {
