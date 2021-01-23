@@ -596,9 +596,7 @@ body {
     border-bottom: 1px solid var(--border-color);
     cursor: pointer;
 }
-.list__label:focus{
-    background-color: var(--background-color);
-}
+
 .list__label:hover,
 .list__input:checked ~ .list__label:hover{
     background-color: var(--color-accent);

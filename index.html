@@ -61,9 +61,9 @@
             </fieldset>
             <fieldset class="age__filter fieldset" id="ageFilter">
                 <legend class="legend">Age:</legend>
-                <input type="number" class="number" name="minAge" id="minAge">
+                <input type="number" class="number" name="minAge" id="minAge" pattern="[0-9]{,3}" title="Field can include only numbers">
                 <span>—</span>
-                <input type="number" class="number" name="maxAge" id="maxAge">
+                <input type="number" class="number" name="maxAge" id="maxAge" pattern="[0-9]{,3}" title="Field can include only numbers">
             </fieldset>
         </form>
         <div class="cards__container"></div>

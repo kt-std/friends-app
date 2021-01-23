@@ -12,6 +12,8 @@ const USERS_AMOUNT = 24,
     OPTIONS_LIST = document.querySelectorAll(".list__label"),
     TOTAL_COUNTER = document.querySelector(".amount");
 
+
+
 function getFriends() {
     fetch(API_URL)
         .then((response) => {
@@ -194,8 +196,6 @@ function sortCards(e, friendsArray) {
         e.target.classList.contains("list__label") ||
         e.target.classList.contains("select__container")
     ) {
-        updateSelectText(getSelectOption(selectedOption));
-        higlightSelectedOption(getSelectOption(selectedOption));
         SELECT_CONTAINER.attributes["select-modified"].value = true;
         sortCardsArray(e.target.getAttribute("value"), friendsArray);
     }
@@ -253,15 +253,18 @@ function filterByGender(e, friendsArray) {
 function filterByAge(friendsArray) {
     const min = document.getElementById(MIN_AGE_INPUT_ID),
         max = document.getElementById(MAX_AGE_INPUT_ID);
-    return min.value && max.value
-        ? friendsArray.filter(
-              (friend) => friend.age >= min.value && friend.age <= max.value)
-        : friendsArray;
+    if (max.value) friendsArray = friendsArray.filter((friend) => friend.age <= max.value);
+    if (min.value) friendsArray = friendsArray.filter((friend) => friend.age >= min.value);
+    return friendsArray;
 }
 
 function checkFiltersChanged(event) {
     return ["list__label", "select__container", "number", "checkbox"]
-        .some((filter) => event.target.classList.contains(filter));
+        .some((filter) => {
+            if (!(event.type === "click" &&  event.target.classList.contains("select__container"))) {
+                return event.target.classList.contains(filter);
+            }
+        });
 }
 
 function updateCards(event) {
@@ -338,6 +341,7 @@ function focusOnItem(buttonPressed) {
     }
 }
 
+
 function observeOptionsListVisibility() {
     const options = { attributes: true, attributesFilter: ["classList"] },
         callback = function (mutationsList, observer) {
@@ -347,6 +351,10 @@ function observeOptionsListVisibility() {
                         mutation.target.classList.contains("visible") &&
                         !SELECT_CONTAINER.getAttribute("aria-expanded")
                     ) {
+                        resetOptions(selectedOption);
+                        updateSelectText(getSelectOption(selectedOption));
+                        higlightSelectedOption(getSelectOption(selectedOption));
+
                         SELECT_CONTAINER.setAttribute("aria-expanded", "true");
                     }
                     if (
@@ -361,6 +369,8 @@ function observeOptionsListVisibility() {
     const observer = new MutationObserver(callback);
     observer.observe(OPTIONS_CONTAINER, options);
 }
+
+observeOptionsListVisibility();
 
 SELECT_CONTAINER.addEventListener("focusout", (e) => {
     if (
@@ -421,9 +431,7 @@ document.querySelector("#sort").addEventListener("click", (e) => {
         e.target.classList.contains("list__label") ||
         e.target.classList.contains("select__container")
     ) {
-        selectedOption = !SELECT_CONTAINER.getAttribute("value")
-            ? OPTIONS_LIST[0].textContent
-            : e.target.textContent;
+        selectedOption = !SELECT_CONTAINER.getAttribute("value")  ? OPTIONS_LIST[0].textContent : e.target.textContent;
         OPTIONS_CONTAINER.classList.toggle("visible");
     }
 });
