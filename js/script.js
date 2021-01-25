@@ -188,7 +188,7 @@ function sortCards(e, friendsArray) {
         e.target.classList.contains("select__container")
     ) {
         SELECT_CONTAINER.attributes["select-modified"].value = true;
-        sortCardsArray(e.target.getAttribute("value"), friendsArray);
+        sortCardsArray[e.target.getAttribute("value")](friendsArray);
     }
 }
 
@@ -197,21 +197,19 @@ function updateSelectText(itemToSelect) {
     SELECT_CONTAINER.setAttribute("value", itemToSelect.getAttribute("value"));
 }
 
-function sortCardsArray(condition, friendsArray) {
-    switch (condition) {
-        case "namesDescending":
-            FRIENDS_ARRAY.sort((a, b) => b.firstName.localeCompare(a.firstName));
-            break;
-        case "namesAscending":
-            FRIENDS_ARRAY.sort((a, b) => a.firstName.localeCompare(b.firstName));
-            break;
-        case "ageDescending":
-            FRIENDS_ARRAY.sort((a, b) => b.age - a.age);
-            break;
-        case "ageAscending":
-            FRIENDS_ARRAY.sort((a, b) => a.age - b.age);
-            break;
-    }
+const sortCardsArray = {
+    namesDescending: function(friendsArray) {
+        friendsArray.sort((a, b) => b.firstName.localeCompare(a.firstName));
+    },
+    namesAscending: function(friendsArray) {
+        friendsArray.sort((a, b) => a.firstName.localeCompare(b.firstName));
+    },
+    ageDescending: function(friendsArray) {
+        friendsArray.sort((a, b) => b.age - a.age);
+    },
+    ageAscending: function(friendsArray) {
+        friendsArray.sort((a, b) => a.age - b.age);
+    },
 }
 
 function findSubstring(string, substring) {
