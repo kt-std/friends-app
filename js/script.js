@@ -3,8 +3,8 @@ let FRIENDS_ARRAY = [],
     INITIAL_FRIENDS_ARRAY = [];
 const USERS_AMOUNT = 24,
     API_URL = `https://randomuser.me/api/?results=${USERS_AMOUNT}`,
-    MIN_AGE_INPUT_ID = "minAge",
-    MAX_AGE_INPUT_ID = "maxAge",
+    MIN_AGE_INPUT = document.getElementById("minAge"),
+    MAX_AGE_INPUT = document.getElementById("maxAge"),
     CARDS_CONTAINER = document.querySelector(".cards__container"),
     SELECT_CONTAINER = document.querySelector(".select__container"),
     FILTERS_CONTAINER = document.querySelector(".filters__container"),
@@ -13,9 +13,17 @@ const USERS_AMOUNT = 24,
     TOTAL_COUNTER = document.querySelector(".amount");
 
 
+async function initializeApp(){
+    await getFriends();
+    appendFriendsCards(FRIENDS_ARRAY);
+    setTotalCounter(FRIENDS_ARRAY);
+    initializeAgeLimits(FRIENDS_ARRAY);
+}
 
-function getFriends() {
-    fetch(API_URL)
+initializeApp();
+
+async function getFriends() {
+    return fetch(API_URL)
         .then((response) => {
             if (response.ok) {
                 return response.json();
@@ -31,9 +39,6 @@ function getFriends() {
                 flattenFriendProperties(responseBody.results)
             );
             FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY;
-            appendFriendsCards(FRIENDS_ARRAY);
-            setTotalCounter(FRIENDS_ARRAY);
-            initializeAgeLimits(FRIENDS_ARRAY);
         })
         .catch((error) => {
             const errorText = error.toString().split(" ").slice(1).join(" ");
@@ -42,8 +47,6 @@ function getFriends() {
             document.querySelector(".more__button").classList.toggle("display-none");
         });
 }
-
-getFriends();
 
 function setTotalCounter(friendsArray) {
     TOTAL_COUNTER.innerText = `${friendsArray.length} Totals`;
@@ -54,8 +57,8 @@ function setTotalCounter(friendsArray) {
 
 function initializeAgeLimits(friendsArray) {
     const ageLimits = getAgeLimits(friendsArray);
-    setAgeLimits(ageLimits, MIN_AGE_INPUT_ID);
-    setAgeLimits(ageLimits, MAX_AGE_INPUT_ID);
+    setAgeLimits(ageLimits, MIN_AGE_INPUT, 'min');
+    setAgeLimits(ageLimits, MAX_AGE_INPUT, 'max');
 }
 
 function appendNoResultsMessage() {
@@ -166,12 +169,10 @@ function getResponseErrorMessage(status, statusText) {
     return `<h2 class='error__code'>${status}: ${statusText}</h2>`;
 }
 
-function setAgeLimits(ageLimits, limitInputId) {
-    const limitInput = document.getElementById(limitInputId);
+function setAgeLimits(ageLimits, limitInput, limit) {
     limitInput.min = ageLimits.min;
     limitInput.max = ageLimits.max;
-    if (limitInputId === MIN_AGE_INPUT_ID) limitInput.value = ageLimits.min;
-    if (limitInputId === MAX_AGE_INPUT_ID) limitInput.value = ageLimits.max;
+    limitInput.value = ageLimits[limit];
 }
 
 function getAgeLimits(friendsArray) {
@@ -213,7 +214,7 @@ const sortCardsArray = {
 }
 
 function findSubstring(string, substring) {
-    return string.toLowerCase().indexOf(substring.toLowerCase()) >= 0;
+    return string.toLowerCase().includes(substring.toLowerCase());
 }
 
 function findMatchesWithPropertiesValues(
@@ -236,10 +237,10 @@ function filterByGender(e, friendsArray) {
 }
 
 function filterByAge(friendsArray) {
-    const min = document.getElementById(MIN_AGE_INPUT_ID),
-        max = document.getElementById(MAX_AGE_INPUT_ID);
-    if (max.value) friendsArray = friendsArray.filter((friend) => friend.age <= max.value);
-    if (min.value) friendsArray = friendsArray.filter((friend) => friend.age >= min.value);
+    if (MIN_AGE_INPUT.value) friendsArray = friendsArray
+        .filter((friend) => friend.age >= MIN_AGE_INPUT.value);
+    if (MAX_AGE_INPUT.value) friendsArray = friendsArray
+        .filter((friend) => friend.age <= MAX_AGE_INPUT.value);
     return friendsArray;
 }
 
