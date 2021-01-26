@@ -223,9 +223,7 @@ function findMatchesWithPropertiesValues(
     substring
 ) {
     return friendsArray.filter((friend) => {
-        return propertiesList
-            .map((property) => findSubstring(friend[property], substring))
-            .some((el) => el);
+        return propertiesList.filter((property) => findSubstring(friend[property], substring)).length;
     });
 }
 
