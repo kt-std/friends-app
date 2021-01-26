@@ -297,38 +297,15 @@ function focusOnItem(buttonPressed) {
     const optionsListArray = Array.from(OPTIONS_LIST),
         selectedItem = optionsListArray.find(
             (listItem) => listItem.textContent === selectedOption
-        ),
-        selectedItemIndex = Array.from(OPTIONS_LIST).indexOf(selectedItem);
-    if (buttonPressed === "ArrowUp") {
-        switch (true) {
-            case !isFirstListItem(selectedItemIndex):
-                higlightSelectedOption(optionsListArray[selectedItemIndex - 1]);
-                selectedOption = optionsListArray[selectedItemIndex - 1].textContent;
-                resetPreviouslySelectedOptions(selectedOption);
-                removeAriaSelectedAttribute(selectedItem);
-                break;
-            case !isFirstListItem(selectedItemIndex):
-                break;
-        }
-    } else if (buttonPressed === "ArrowDown") {
-        switch (true) {
-            case !isLastListItem(selectedItemIndex, optionsListArray):
-                higlightSelectedOption(optionsListArray[selectedItemIndex + 1]);
-                selectedOption = optionsListArray[selectedItemIndex + 1].textContent;
-                resetPreviouslySelectedOptions(selectedOption);
-                removeAriaSelectedAttribute(selectedItem);
-                break;
-            case isLastListItem(selectedItemIndex, optionsListArray):
-                break;
-        }
-    }
-}
-
-function isLastListItem(selectedItemIndex, optionsArray){
-    return selectedItemIndex === optionsArray.length - 1;
-}
-function isFirstListItem(selectedItemIndex){
-    return selectedItemIndex === 0;
+        );
+    let selectedItemIndex = Array.from(OPTIONS_LIST).indexOf(selectedItem);
+    buttonPressed === "ArrowUp" ? selectedItemIndex-- : selectedItemIndex++;
+    if(selectedItemIndex >= 0 && selectedItemIndex <= optionsListArray.length-1){
+        higlightSelectedOption(optionsListArray[selectedItemIndex]);
+        selectedOption = optionsListArray[selectedItemIndex].textContent;
+        resetPreviouslySelectedOptions(selectedOption);
+        removeAriaSelectedAttribute(selectedItem);
+    }    
 }
 
 function observeOptionsListVisibility() {
