@@ -263,6 +263,10 @@ function isSearchEmpty(){
     return !document.getElementById("search").value;
 }
 
+function isItemInFocus(e){
+    return e.target.contains(e.relatedTarget);
+}
+
 function isSelectModified() {
     return SELECT_CONTAINER.attributes["select-modified"].value === "true";
 }
@@ -361,8 +365,9 @@ document.querySelectorAll(".gender__input, .number").forEach(input => {
 document.querySelector("#search").addEventListener("input", () => updateCards());
 
 SELECT_CONTAINER.addEventListener("focusout", (e) => {
-    if (!e.target.contains(e.relatedTarget))
+    if (!isItemInFocus(e)){
         OPTIONS_CONTAINER.classList.remove("visible");
+    }
 });
 
 document.addEventListener("keydown", (e) => {
