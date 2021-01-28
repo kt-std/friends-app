@@ -7,6 +7,7 @@ const USERS_AMOUNT = 24,
     MIN_AGE_INPUT = document.getElementById("minAge"),
     MAX_AGE_INPUT = document.getElementById("maxAge"),
     CARDS_CONTAINER = document.querySelector(".cards__container"),
+    SEARCH_INPUT = document.querySelector("#search"),
     SELECT_CONTAINER = document.querySelector(".select__container"),
     FILTERS_CONTAINER = document.querySelector(".filters__container"),
     OPTIONS_CONTAINER = document.querySelector(".select__list"),
@@ -228,7 +229,7 @@ function findMatchesWithPropertiesValues(
     });
 }
 
-function filterByGender(e, friendsArray) {
+function filterByGender(friendsArray) {
     let checkboxes = Array.from(document.querySelectorAll(".checkbox:checked"));
     return friendsArray.filter((friend) =>
         checkboxes.some((gender) => friend.gender === gender.value)
@@ -244,13 +245,22 @@ function filterByAge(friendsArray) {
 }
 
 
-function updateCards(event) {    
+function updateCards() {    
     FRIENDS_ARRAY = INITIAL_FRIENDS_ARRAY;
     sortCards(FRIENDS_ARRAY);
     FRIENDS_ARRAY = filterByAge(FRIENDS_ARRAY);
-    FRIENDS_ARRAY = filterByGender(event, FRIENDS_ARRAY);
-    if(isSearchEmpty()) console.log(isSearchEmpty());
+    FRIENDS_ARRAY = filterByGender(FRIENDS_ARRAY);
+    if(!isSearchEmpty()) {
+        FRIENDS_ARRAY = findMatchesWithPropertiesValues(
+            FRIENDS_ARRAY,
+            SEARCH_INPUT.value
+        );
+    }
     appendFriendsCards(FRIENDS_ARRAY);
+}
+
+function isSearchEmpty(){
+    return !document.getElementById("search").value;
 }
 
 function isSelectModified() {
@@ -277,10 +287,6 @@ function getSelectOption(selectText) {
     return Array.from(OPTIONS_LIST).find(
         (option) => option.textContent === selectText
     );
-}
-
-function isSearchEmpty(){
-    return document.getElementById("search").value;
 }
 
 function higlightSelectedOption(itemToSelect) {
@@ -338,25 +344,25 @@ function observeOptionsListVisibility() {
 
 observeOptionsListVisibility();
 
-SELECT_CONTAINER.addEventListener("focusout", (e) => {
-    if (!e.target.contains(e.relatedTarget))
-        OPTIONS_CONTAINER.classList.remove("visible");
-});
-
 document.querySelectorAll(".list__input").forEach(input => {
-    input.addEventListener("change", e => {
+    input.addEventListener("change", (e) => {
         const selectedItemLabel = document.querySelector(`[for=${e.target.id}]`);
         selectedOption = selectedItemLabel.textContent;
         resetPreviouslySelectedOptions(selectedOption);
         updateSelectText(selectedItemLabel);
-        updateCards(e);
+        updateCards();
     });
 });
 
-document.querySelectorAll(".gender__input").forEach(input => {
-    input.addEventListener("change", e => {
-        updateCards(e);
-    });
+document.querySelectorAll(".gender__input, .number").forEach(input => {
+    input.addEventListener("change", () => updateCards());
+});
+
+document.querySelector("#search").addEventListener("input", () => updateCards());
+
+SELECT_CONTAINER.addEventListener("focusout", (e) => {
+    if (!e.target.contains(e.relatedTarget))
+        OPTIONS_CONTAINER.classList.remove("visible");
 });
 
 document.addEventListener("keydown", (e) => {
@@ -373,7 +379,7 @@ document.addEventListener("keydown", (e) => {
                     higlightSelectedOption(OPTIONS_LIST[0]);
                 }
             } else {
-                updateCards(e);
+                updateCards();
                 OPTIONS_CONTAINER.classList.remove("visible");
             }
         }
@@ -402,21 +408,6 @@ SELECT_CONTAINER.addEventListener("click", (e) => {
     }else{
         selectedOption = e.target.textContent;
     }
-});
-
-document.querySelector("#search").addEventListener("input", (e) => {
-    const inputString = e.target.value,
-        filteredArray = findMatchesWithPropertiesValues(
-            FRIENDS_ARRAY,
-            inputString
-        );
-    appendFriendsCards(filteredArray);
-});
-
-document.querySelectorAll(".number").forEach((ageInput) => {
-    ageInput.addEventListener("change", (event) => {
-        updateCards(event);
-    });
 });
 
 window.addEventListener("beforeunload", () => {
