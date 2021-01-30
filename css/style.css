@@ -350,8 +350,12 @@ body {
 
 .country__row {
     background-color: #aaa;
+    height:45px;
+    width: -moz-calc(100% + var(--padding));     
+    width: -webkit-calc(100% + var(--padding));
     width: calc(100% + var(--padding));
-    height: calc(100% + var(--padding));
+    height: -webkit-calc(100% + var(--padding));
+    height: -moz-calc(100% + var(--padding));
     margin-bottom: -20px;
     transition: var(--animation-duration);
     border-radius: 0 0 5px 5px;
@@ -384,10 +388,9 @@ body {
 
 .search__field {
     width: 100%;
-    min-height: 48px;
+    height: 48px;
     cursor: pointer;
     transition: var(--animation-duration);
-    height: 100%;
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
     font-size: var(--font-medium);
