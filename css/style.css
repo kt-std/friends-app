@@ -210,17 +210,8 @@ body {
 }
 
 @keyframes opacity {
-    0% {
-        opacity: 0
-    }
-
-    ;
-
-    100% {
-        opacity: 1
-    }
-
-    ;
+    0% { opacity: 0 };
+    100% { opacity: 1 };
 }
 
 .card__image {
@@ -350,12 +341,8 @@ body {
 
 .country__row {
     background-color: #aaa;
-    height:45px;
-    width: -moz-calc(100% + var(--padding));     
-    width: -webkit-calc(100% + var(--padding));
     width: calc(100% + var(--padding));
-    height: -webkit-calc(100% + var(--padding));
-    height: -moz-calc(100% + var(--padding));
+    height: calc(100% + var(--padding));
     margin-bottom: -20px;
     transition: var(--animation-duration);
     border-radius: 0 0 5px 5px;
@@ -388,9 +375,10 @@ body {
 
 .search__field {
     width: 100%;
-    height: 48px;
+    min-height: 48px;
     cursor: pointer;
     transition: var(--animation-duration);
+    height: 100%;
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
     font-size: var(--font-medium);
@@ -576,19 +564,21 @@ body {
     visibility: visible;
     opacity: 1;
 }
-.list__item{
+
+.list__item {
     width: 100%;
 }
 
-.list__input{
-    -webkit-appearance:none;
+.list__input {
+    -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     position: absolute;
     height: 0;
     width: 0;
 }
-.list__label{
+
+.list__label {
     display: inline-block;
     box-sizing: border-box;
     color: var(--username-color);
@@ -601,14 +591,16 @@ body {
 }
 
 .list__label:hover,
-.list__input:checked ~ .list__label:hover{
+.list__input:checked~.list__label:hover {
     background-color: var(--color-accent);
     color: white;
 }
-.focus{
+
+.focus {
     background-color: var(--background-color);
 }
-.list__input:checked ~ .list__label{    
+
+.list__input:checked~.list__label {
     background-color: var(--background-color);
 }
 
